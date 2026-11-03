@@ -106,8 +106,15 @@ class _SettingsViewState extends State<SettingsView> {
     });
 
     try {
-      final url = Uri.parse("https://raw.githubusercontent.com/yogeshojha/patro/main/CalendarData.js");
-      final response = await http.get(url).timeout(const Duration(seconds: 10));
+      // Primary canonical branch is 'master' on upstream patro repository
+      var url = Uri.parse("https://raw.githubusercontent.com/yogeshojha/patro/master/CalendarData.js");
+      var response = await http.get(url).timeout(const Duration(seconds: 10));
+
+      // Fallback to 'main' branch if master is not found
+      if (response.statusCode != 200) {
+        url = Uri.parse("https://raw.githubusercontent.com/yogeshojha/patro/main/CalendarData.js");
+        response = await http.get(url).timeout(const Duration(seconds: 10));
+      }
 
       if (response.statusCode == 200) {
         final body = response.body;
