@@ -7,7 +7,7 @@ plugins {
 android {
     namespace = "com.bishal.patro_flutter"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // ndkVersion not needed for pure Dart/Kotlin app
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
