@@ -25,6 +25,7 @@ class _SettingsViewState extends State<SettingsView> {
   String _syncStatusMessage = "";
   bool _syncSuccess = false;
   bool _showLockScreenBanner = true;
+  String _statusBarNumeral = "Latin";
 
   @override
   void initState() {
@@ -36,7 +37,21 @@ class _SettingsViewState extends State<SettingsView> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _showLockScreenBanner = prefs.getBool('show_lockscreen_banner') ?? true;
+      _statusBarNumeral = prefs.getString('status_bar_numeral') ?? 'Latin';
     });
+  }
+
+  Future<void> _updateStatusBarNumeral(String val) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('status_bar_numeral', val);
+    setState(() {
+      _statusBarNumeral = val;
+    });
+
+    if (_showLockScreenBanner) {
+      final today = widget.engine.getToday();
+      await NotificationService.instance.showOngoingDateBanner(today, statusIconNumeral: val);
+    }
   }
 
   Future<void> _toggleLockScreenBanner(bool enabled) async {
@@ -48,7 +63,7 @@ class _SettingsViewState extends State<SettingsView> {
 
     if (enabled) {
       final today = widget.engine.getToday();
-      await NotificationService.instance.showOngoingDateBanner(today);
+      await NotificationService.instance.showOngoingDateBanner(today, statusIconNumeral: _statusBarNumeral);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -72,7 +87,7 @@ class _SettingsViewState extends State<SettingsView> {
 
   Future<void> _sendTestAlert() async {
     final today = widget.engine.getToday();
-    await NotificationService.instance.showNormalAlert(today);
+    await NotificationService.instance.showNormalAlert(today, statusIconNumeral: _statusBarNumeral);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -259,6 +274,27 @@ class _SettingsViewState extends State<SettingsView> {
                         value: _showLockScreenBanner,
                         activeColor: const Color(0xFF007AFF),
                         onChanged: _toggleLockScreenBanner,
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: const Icon(Icons.pin_rounded, color: Color(0xFF007AFF)),
+                        title: const Text("स्ट्याटस बार आइकन (Status Bar Icon Day)"),
+                        subtitle: Text(
+                          _statusBarNumeral == "Latin" ? "अंग्रेजी गते (17)" : "नेपाली गते (१७)",
+                        ),
+                        trailing: DropdownButton<String>(
+                          value: _statusBarNumeral,
+                          underline: const SizedBox(),
+                          items: const [
+                            DropdownMenuItem(value: "Latin", child: Text("17 (English)")),
+                            DropdownMenuItem(value: "Devanagari", child: Text("१७ (नेपाली)")),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              _updateStatusBarNumeral(val);
+                            }
+                          },
+                        ),
                       ),
                       const Divider(height: 1),
                       ListTile(

@@ -30,12 +30,13 @@ void main() async {
   try {
     final prefs = await SharedPreferences.getInstance();
     final bool showBanner = prefs.getBool('show_lockscreen_banner') ?? true;
+    final String statusIconNumeral = prefs.getString('status_bar_numeral') ?? 'Latin';
     final notifService = NotificationService.instance;
     await notifService.initialize();
 
     if (showBanner) {
       final today = engine.getToday();
-      await notifService.showOngoingDateBanner(today);
+      await notifService.showOngoingDateBanner(today, statusIconNumeral: statusIconNumeral);
     }
   } catch (e) {
     print("Notification initialization notice: $e");

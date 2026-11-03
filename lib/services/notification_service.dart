@@ -72,8 +72,11 @@ class NotificationService {
   }
 
   /// 1. Persistent / Ongoing Notification Banner (Visible on Lock Screen & Status Bar)
-  Future<void> showOngoingDateBanner(TodayInfo today) async {
+  Future<void> showOngoingDateBanner(TodayInfo today, {String statusIconNumeral = 'Latin'}) async {
     await initialize();
+
+    final int dayNumber = today.bs.day;
+    final String dayIcon = (statusIconNumeral == "Devanagari") ? "day_dev_$dayNumber" : "day_$dayNumber";
 
     final String title = "${today.dayText} ${today.monthName} ${today.yearText}, ${today.weekdayName}";
     final String gMonth = Nepali.gregorianShortMonths[today.gregorian.month - 1];
@@ -95,6 +98,9 @@ class NotificationService {
       autoCancel: false,
       visibility: NotificationVisibility.public, // Fully visible on Locked Screen!
       showWhen: false,
+      icon: dayIcon,
+      largeIcon: DrawableResourceAndroidBitmap(dayIcon),
+      number: dayNumber,
       styleInformation: BigTextStyleInformation(
         body,
         contentTitle: title,
@@ -122,8 +128,11 @@ class NotificationService {
   }
 
   /// 2. Normal Alert Notification (Popup / Heads-Up Banner with Sound)
-  Future<void> showNormalAlert(TodayInfo today) async {
+  Future<void> showNormalAlert(TodayInfo today, {String statusIconNumeral = 'Latin'}) async {
     await initialize();
+
+    final int dayNumber = today.bs.day;
+    final String dayIcon = (statusIconNumeral == "Devanagari") ? "day_dev_$dayNumber" : "day_$dayNumber";
 
     final String title = "आज: ${today.dayText} ${today.monthName} ${today.yearText}";
     final String gMonth = Nepali.gregorianShortMonths[today.gregorian.month - 1];
@@ -139,6 +148,9 @@ class NotificationService {
       visibility: NotificationVisibility.public, // Shown on lock screen
       playSound: true,
       enableVibration: true,
+      icon: dayIcon,
+      largeIcon: DrawableResourceAndroidBitmap(dayIcon),
+      number: dayNumber,
       styleInformation: BigTextStyleInformation(
         body,
         contentTitle: title,
