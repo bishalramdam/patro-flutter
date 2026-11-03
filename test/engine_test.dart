@@ -140,7 +140,7 @@ void main() {
   assertTrue(convBs.valid, "Bikram conversion valid");
   assertEqual(convBs.gregFormatted, "2026-11-03", "Bikram to Greg formatted");
 
-  var convGreg = engine.convertDate("2026-11-03");
+  var convGreg = engine.convertDate("2026-11-03", isBsInput: false);
   assertTrue(convGreg.valid, "Gregorian conversion valid");
   assertEqual(convGreg.bs?.year, 2083, "Greg to BS year");
   assertEqual(convGreg.bs?.month, 7, "Greg to BS month");

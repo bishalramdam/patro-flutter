@@ -241,13 +241,34 @@ class PatroEngine {
     );
   }
 
-  ConversionResult convertDate(String text) {
+  ConversionResult convertDate(String text, {bool? isBsInput}) {
     var raw = text.trim();
     if (raw.isEmpty) {
       return const ConversionResult(valid: false, error: "कृपया मिति प्रविष्ट गर्नुहोस्");
     }
 
-    // Try Bikram first
+    // If direction is explicitly AD to BS, or if isBsInput is null and year <= 2035
+    if (isBsInput == false) {
+      return _convertFromGregorian(raw);
+    } else if (isBsInput == true) {
+      return _convertFromBikram(raw);
+    }
+
+    // Auto detection
+    var parts = BikramEngine.parseParts(raw);
+    if (parts != null && parts['year']! <= 2035 && parts['year']! >= 1943) {
+      // Very likely a Gregorian date (1943 to 2035 AD)
+      var adRes = _convertFromGregorian(raw);
+      if (adRes.valid) return adRes;
+    }
+
+    var bsRes = _convertFromBikram(raw);
+    if (bsRes.valid) return bsRes;
+
+    return _convertFromGregorian(raw);
+  }
+
+  ConversionResult _convertFromBikram(String raw) {
     var bsParsed = BikramEngine.readBikramDate(raw);
     if (bsParsed['date'] != null) {
       BikramDate bs = bsParsed['date'];
@@ -264,15 +285,18 @@ class PatroEngine {
         valid: true,
         bs: bs,
         gregorian: greg,
-        bsFormatted: "${bs.year} ${Nepali.monthName(bs.month, language)} ${bs.day}",
+        bsFormatted: "${bs.year}-${bs.month.toString().padLeft(2, '0')}-${bs.day.toString().padLeft(2, '0')}",
         gregFormatted: "${greg.year}-${greg.month.toString().padLeft(2, '0')}-${greg.day.toString().padLeft(2, '0')}",
         weekdayName: Nepali.weekdayName(wd, language),
         tithiLabel: Nepali.tithiLabel(tithi, paksha, language),
         observance: Observances.summary(Observances.named(obs), language),
       );
     }
+    String reason = (bsParsed['reason'] ?? "notADate").toString();
+    return _buildErrorResult(reason);
+  }
 
-    // Try Gregorian
+  ConversionResult _convertFromGregorian(String raw) {
     var gregParsed = BikramEngine.readGregorianDate(raw);
     if (gregParsed['date'] != null) {
       BikramDate bs = gregParsed['date'];
@@ -286,15 +310,18 @@ class PatroEngine {
         valid: true,
         bs: bs,
         gregorian: greg,
-        bsFormatted: "${Nepali.numerals(bs.year, numerals)} ${Nepali.monthName(bs.month, language)} ${Nepali.numerals(bs.day, numerals)}",
+        bsFormatted: "${bs.year}-${bs.month.toString().padLeft(2, '0')}-${bs.day.toString().padLeft(2, '0')}",
         gregFormatted: "${greg.year}-${greg.month.toString().padLeft(2, '0')}-${greg.day.toString().padLeft(2, '0')}",
         weekdayName: Nepali.weekdayName(wd, language),
         tithiLabel: Nepali.tithiLabel(tithi, paksha, language),
         observance: Observances.summary(Observances.named(obs), language),
       );
     }
+    String reason = (gregParsed['reason'] ?? "notADate").toString();
+    return _buildErrorResult(reason);
+  }
 
-    String reason = (bsParsed['reason'] ?? gregParsed['reason'] ?? "notADate").toString();
+  ConversionResult _buildErrorResult(String reason) {
     String err = Nepali.message(reason, language);
     if (reason == "outOfRange") {
       err = err

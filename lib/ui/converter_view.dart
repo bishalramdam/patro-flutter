@@ -34,7 +34,7 @@ class _ConverterViewState extends State<ConverterView> {
       });
       return;
     }
-    var res = widget.engine.convertDate(text);
+    var res = widget.engine.convertDate(text, isBsInput: _isBsToAd);
     setState(() {
       _result = res;
     });
