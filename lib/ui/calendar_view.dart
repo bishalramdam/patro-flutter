@@ -89,7 +89,7 @@ class _CalendarViewState extends State<CalendarView> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
-          "पात्रो",
+          "गते",
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 22,
@@ -332,28 +332,6 @@ class _CalendarViewState extends State<CalendarView> {
                                 color: isDark ? Colors.white54 : const Color(0xFF6B7280),
                               ),
                             ),
-                            if (activeDay.observanceSummary.isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: activeDay.isHoliday
-                                      ? const Color(0xFFEF4444).withOpacity(0.12)
-                                      : const Color(0xFF007AFF).withOpacity(0.12),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  activeDay.observanceSummary,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: activeDay.isHoliday
-                                        ? const Color(0xFFEF4444)
-                                        : const Color(0xFF007AFF),
-                                  ),
-                                ),
-                              ),
-                            ]
                           ],
                         ),
                       ),
@@ -398,8 +376,6 @@ class _CalendarViewState extends State<CalendarView> {
       textColor = Colors.white;
     } else if (cell.isSaturday) {
       textColor = const Color(0xFFEF4444);
-    } else if (cell.isHoliday) {
-      textColor = const Color(0xFFDC2626);
     } else {
       textColor = isDark ? Colors.white : const Color(0xFF1F2937);
     }

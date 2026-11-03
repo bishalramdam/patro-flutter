@@ -80,17 +80,11 @@ class NotificationService {
 
     final String title = "${today.dayText} ${today.monthName} ${today.yearText}, ${today.weekdayName}";
     final String gMonth = Nepali.gregorianShortMonths[today.gregorian.month - 1];
-    String body = "${today.gregorian.day} $gMonth ${today.gregorian.year} AD";
-    if (today.observances.isNotEmpty) {
-      body += " · ${today.observances}";
-    }
-    if (today.isHoliday) {
-      body += " (सार्वजनिक बिदा)";
-    }
+    final String body = "${today.gregorian.day} $gMonth ${today.gregorian.year} AD";
 
     final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       ongoingChannelId,
-      'दैनिक पात्रो ब्यानर (Lock Screen Banner)',
+      'दैनिक गते ब्यानर (Lock Screen Banner)',
       channelDescription: 'लक-स्क्रिन र नोटिफिकेसन बारमा आजको मिति देखाउँछ',
       importance: Importance.defaultImportance,
       priority: Priority.defaultPriority,
@@ -106,7 +100,6 @@ class NotificationService {
       styleInformation: BigTextStyleInformation(
         body,
         contentTitle: title,
-        summaryText: "पात्रो (Patro)",
       ),
     );
 
@@ -139,12 +132,12 @@ class NotificationService {
     final String title = "आज: ${today.dayText} ${today.monthName} ${today.yearText}";
     final String gMonth = Nepali.gregorianShortMonths[today.gregorian.month - 1];
     final String body =
-        "${today.cleanYearLabel} (${today.weekdayName}) · ${today.gregorian.day} $gMonth ${today.gregorian.year} AD${today.isHoliday ? " 🔴 आज सार्वजनिक बिदा" : ""}${today.observances.isNotEmpty ? " · ${today.observances}" : ""}";
+        "${today.cleanYearLabel} (${today.weekdayName}) · ${today.gregorian.day} $gMonth ${today.gregorian.year} AD";
 
     final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       alertChannelId,
-      'चाडपर्व तथा बिदा सूचना (Alerts)',
-      channelDescription: 'दैनिक बिहानको मिति, चाडपर्व र सार्वजनिक बिदाको सूचना',
+      'दैनिक मिति सूचना (Daily Date Alerts)',
+      channelDescription: 'दैनिक बिहानको मिति सूचना',
       importance: Importance.high,
       priority: Priority.high,
       visibility: NotificationVisibility.public, // Shown on lock screen
@@ -156,7 +149,6 @@ class NotificationService {
       styleInformation: BigTextStyleInformation(
         body,
         contentTitle: title,
-        summaryText: today.isHoliday ? "सार्वजनिक बिदा" : "नेपाली पात्रो",
       ),
     );
 
