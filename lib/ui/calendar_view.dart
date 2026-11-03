@@ -89,7 +89,7 @@ class _CalendarViewState extends State<CalendarView> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
-          "गते",
+          "पात्रो",
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 22,

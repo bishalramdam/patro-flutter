@@ -166,7 +166,7 @@ struct PatroWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             PatroWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("गते (Gate)")
+        .configurationDisplayName("पात्रो")
         .description("आजको नेपाली मिति र बार देखाउँछ।")
         .supportedFamilies([.systemSmall, .systemMedium])
     }

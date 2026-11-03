@@ -84,7 +84,7 @@ class NotificationService {
 
     final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       ongoingChannelId,
-      'दैनिक गते ब्यानर (Lock Screen Banner)',
+      'दैनिक पात्रो ब्यानर (Lock Screen Banner)',
       channelDescription: 'लक-स्क्रिन र नोटिफिकेसन बारमा आजको मिति देखाउँछ',
       importance: Importance.defaultImportance,
       priority: Priority.defaultPriority,
