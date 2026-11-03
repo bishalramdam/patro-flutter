@@ -30,7 +30,7 @@
 
         <!-- Patro Home Screen Widget -->
         <receiver
-            android:name="com.bishal.patromobile.PatroAppWidget"
+            android:name=".PatroAppWidget"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

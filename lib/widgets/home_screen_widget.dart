@@ -6,7 +6,7 @@ import '../engine/nepali.dart';
 import '../engine/patro_engine.dart';
 
 class HomeScreenWidgetHelper {
-  static const String appGroupId = 'group.com.bishal.patromobile';
+  static const String appGroupId = 'group.com.bishal.patro_flutter';
   static const String androidWidgetName = 'PatroAppWidget';
   static const String iOSWidgetName = 'PatroWidget';
 

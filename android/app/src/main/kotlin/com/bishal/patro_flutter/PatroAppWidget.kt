@@ -1,9 +1,10 @@
-package com.bishal.patromobile
+package com.bishal.patro_flutter
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.widget.RemoteViews
+import com.bishal.patro_flutter.R
 import es.antonborri.home_widget.HomeWidgetPlugin
 
 class PatroAppWidget : AppWidgetProvider() {

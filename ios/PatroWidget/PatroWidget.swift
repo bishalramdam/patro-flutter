@@ -34,7 +34,7 @@ struct Provider: TimelineProvider {
     }
 
     private func fetchCurrentEntry() -> PatroEntry {
-        let userDefaults = UserDefaults(suiteName: "group.com.bishal.patromobile")
+        let userDefaults = UserDefaults(suiteName: "group.com.bishal.patro_flutter")
         let day = userDefaults?.string(forKey: "bs_day") ?? "१७"
         let month = userDefaults?.string(forKey: "bs_month") ?? "कात्तिक"
         let year = userDefaults?.string(forKey: "bs_year") ?? "२०८३"
