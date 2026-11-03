@@ -3,7 +3,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'engine/patro_engine.dart';
+import 'services/notification_service.dart';
 import 'ui/calendar_view.dart';
 import 'ui/converter_view.dart';
 import 'ui/settings_view.dart';
@@ -23,6 +25,21 @@ void main() async {
 
   // Background update home screen widgets
   HomeScreenWidgetHelper.updateWidgets(engine);
+
+  // Initialize offline notifications & show persistent lock-screen banner
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final bool showBanner = prefs.getBool('show_lockscreen_banner') ?? true;
+    final notifService = NotificationService.instance;
+    await notifService.initialize();
+
+    if (showBanner) {
+      final today = engine.getToday();
+      await notifService.showOngoingDateBanner(today);
+    }
+  } catch (e) {
+    print("Notification initialization notice: $e");
+  }
 
   runApp(PatroApp(engine: engine));
 }

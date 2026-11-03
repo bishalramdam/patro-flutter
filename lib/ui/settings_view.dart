@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../engine/bikram.dart';
 import '../engine/calendar_data.dart';
 import '../engine/patro_engine.dart';
+import '../services/notification_service.dart';
 
 class SettingsView extends StatefulWidget {
   final PatroEngine engine;
@@ -23,6 +24,64 @@ class _SettingsViewState extends State<SettingsView> {
   bool _isCheckingUpdate = false;
   String _syncStatusMessage = "";
   bool _syncSuccess = false;
+  bool _showLockScreenBanner = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationPreference();
+  }
+
+  Future<void> _loadNotificationPreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _showLockScreenBanner = prefs.getBool('show_lockscreen_banner') ?? true;
+    });
+  }
+
+  Future<void> _toggleLockScreenBanner(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('show_lockscreen_banner', enabled);
+    setState(() {
+      _showLockScreenBanner = enabled;
+    });
+
+    if (enabled) {
+      final today = widget.engine.getToday();
+      await NotificationService.instance.showOngoingDateBanner(today);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("लक-स्क्रिन ब्यानर सक्रिय भयो!"),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } else {
+      await NotificationService.instance.cancelOngoingBanner();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("लक-स्क्रिन ब्यानर निष्क्रिय भयो।"),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _sendTestAlert() async {
+    final today = widget.engine.getToday();
+    await NotificationService.instance.showNormalAlert(today);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("नोटिफिकेसन ब्यानर पठाइयो! माथि स्क्रिनबाट स्वाइप गरी हेर्नुहोस्।"),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
 
   Future<void> _checkGithubUpdate() async {
     setState(() {
@@ -114,52 +173,104 @@ class _SettingsViewState extends State<SettingsView> {
                   )
                 ],
               ),
-              child: Column(
-                children: [
-                  ListTile(
-                    title: const Text("अङ्क शैली (Numerals)"),
-                    subtitle: Text(
-                      widget.engine.numerals == "Devanagari" ? "देवनागरी (०१२३४५६७८९)" : "ल्याटिन (0123456789)",
-                    ),
-                    trailing: DropdownButton<String>(
-                      value: widget.engine.numerals,
-                      underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: "Devanagari", child: Text("देवनागरी")),
-                        DropdownMenuItem(value: "Latin", child: Text("English")),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          setState(() {
-                            widget.engine.numerals = val;
-                          });
-                          widget.onStateChanged();
-                        }
-                      },
-                    ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: const Text("अङ्क शैली (Numerals)"),
+                        subtitle: Text(
+                          widget.engine.numerals == "Devanagari" ? "देवनागरी (०१२३४५६७८९)" : "ल्याटिन (0123456789)",
+                        ),
+                        trailing: DropdownButton<String>(
+                          value: widget.engine.numerals,
+                          underline: const SizedBox(),
+                          items: const [
+                            DropdownMenuItem(value: "Devanagari", child: Text("देवनागरी")),
+                            DropdownMenuItem(value: "Latin", child: Text("English")),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                widget.engine.numerals = val;
+                              });
+                              widget.onStateChanged();
+                            }
+                          },
+                        ),
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        title: const Text("भाषा (Language)"),
+                        subtitle: Text(widget.engine.language == "Nepali" ? "नेपाली (Nepali)" : "English"),
+                        trailing: DropdownButton<String>(
+                          value: widget.engine.language,
+                          underline: const SizedBox(),
+                          items: const [
+                            DropdownMenuItem(value: "Nepali", child: Text("नेपाली")),
+                            DropdownMenuItem(value: "English", child: Text("English")),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                widget.engine.language = val;
+                              });
+                              widget.onStateChanged();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  const Divider(height: 1),
-                  ListTile(
-                    title: const Text("भाषा (Language)"),
-                    subtitle: Text(widget.engine.language == "Nepali" ? "नेपाली (Nepali)" : "English"),
-                    trailing: DropdownButton<String>(
-                      value: widget.engine.language,
-                      underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: "Nepali", child: Text("नेपाली")),
-                        DropdownMenuItem(value: "English", child: Text("English")),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          setState(() {
-                            widget.engine.language = val;
-                          });
-                          widget.onStateChanged();
-                        }
-                      },
-                    ),
-                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Notification Section
+            _buildSectionHeader("सूचना तथा ब्यानर (Notifications & Lock Screen)", isDark),
+            const SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E2530) : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
                 ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Column(
+                    children: [
+                      SwitchListTile(
+                        title: const Text("लक-स्क्रिन र ब्यानर (Lock Screen Banner)"),
+                        subtitle: const Text(
+                          "फोन लक हुँदा पनि स्क्रिनमा आजको मिति, बार र तिथि देखाइराख्ने",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        value: _showLockScreenBanner,
+                        activeColor: const Color(0xFF007AFF),
+                        onChanged: _toggleLockScreenBanner,
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: const Icon(Icons.notifications_active_rounded, color: Color(0xFF007AFF)),
+                        title: const Text("सामान्य सूचना परीक्षण (Test Alert Banner)"),
+                        subtitle: const Text("तत्काल पप-अप ब्यानर सूचना पठाएर हेर्नुहोस्", style: TextStyle(fontSize: 12)),
+                        trailing: const Icon(Icons.chevron_right_rounded),
+                        onTap: _sendTestAlert,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 24),
