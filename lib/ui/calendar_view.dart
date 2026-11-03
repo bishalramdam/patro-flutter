@@ -424,40 +424,44 @@ class _CalendarViewState extends State<CalendarView> {
               ? Border.all(color: const Color(0xFF007AFF), width: 1.5)
               : null,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              cell.dayText,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: cell.isToday ? FontWeight.w800 : FontWeight.w600,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              cell.gregorianDayText,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: cell.isToday
-                    ? Colors.white.withOpacity(0.8)
-                    : (isDark ? Colors.white38 : const Color(0xFF9CA3AF)),
-              ),
-            ),
-            if (cell.isHoliday && !cell.isToday) ...[
-              const SizedBox(height: 2),
-              Container(
-                width: 4,
-                height: 4,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFEF4444),
-                  shape: BoxShape.circle,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                cell.dayText,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: cell.isToday ? FontWeight.w800 : FontWeight.w600,
+                  color: textColor,
                 ),
               ),
-            ]
-          ],
+              const SizedBox(height: 1),
+              Text(
+                cell.gregorianDayText,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: cell.isToday
+                      ? Colors.white.withOpacity(0.8)
+                      : (isDark ? Colors.white38 : const Color(0xFF9CA3AF)),
+                ),
+              ),
+              if (cell.isHoliday && !cell.isToday) ...[
+                const SizedBox(height: 1),
+                Container(
+                  width: 4,
+                  height: 4,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFEF4444),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ]
+            ],
+          ),
         ),
       ),
     );
