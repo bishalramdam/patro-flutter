@@ -23,26 +23,32 @@ void main() async {
   // Initialize unified engine
   final engine = PatroEngine.instance;
 
-  // Background update home screen widgets
-  HomeScreenWidgetHelper.updateWidgets(engine);
-
-  // Initialize offline notifications & show persistent lock-screen banner
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    final bool showBanner = prefs.getBool('show_lockscreen_banner') ?? true;
-    final String statusIconNumeral = prefs.getString('status_bar_numeral') ?? 'Latin';
-    final notifService = NotificationService.instance;
-    await notifService.initialize();
-
-    if (showBanner) {
-      final today = engine.getToday();
-      await notifService.showOngoingDateBanner(today, statusIconNumeral: statusIconNumeral);
-    }
-  } catch (e) {
-    print("Notification initialization notice: $e");
-  }
-
+  // Render UI immediately so the app opens instantly on any device
   runApp(PatroApp(engine: engine));
+
+  // Background services initialized asynchronously without blocking startup
+  Future.microtask(() async {
+    try {
+      await HomeScreenWidgetHelper.updateWidgets(engine);
+    } catch (e) {
+      // Silently catch widget sync exceptions
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final bool showBanner = prefs.getBool('show_lockscreen_banner') ?? true;
+      final String statusIconNumeral = prefs.getString('status_bar_numeral') ?? 'Latin';
+      final notifService = NotificationService.instance;
+      await notifService.initialize();
+
+      if (showBanner) {
+        final today = engine.getToday();
+        await notifService.showOngoingDateBanner(today, statusIconNumeral: statusIconNumeral);
+      }
+    } catch (e) {
+      // Silently catch notification initialization exceptions
+    }
+  });
 }
 
 class PatroApp extends StatelessWidget {
