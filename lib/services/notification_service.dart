@@ -77,7 +77,7 @@ class NotificationService {
 
     final String title = "${today.dayText} ${today.monthName} ${today.yearText}, ${today.weekdayName}";
     final String gMonth = Nepali.gregorianShortMonths[today.gregorian.month - 1];
-    String body = "${today.gregorian.day} $gMonth ${today.gregorian.year} AD · ${today.tithiLabel}";
+    String body = "${today.gregorian.day} $gMonth ${today.gregorian.year} AD";
     if (today.observances.isNotEmpty) {
       body += " · ${today.observances}";
     }
@@ -126,8 +126,9 @@ class NotificationService {
     await initialize();
 
     final String title = "आज: ${today.dayText} ${today.monthName} ${today.yearText}";
+    final String gMonth = Nepali.gregorianShortMonths[today.gregorian.month - 1];
     final String body =
-        "${today.cleanYearLabel} (${today.weekdayName}) · ${today.tithiLabel}${today.isHoliday ? " 🔴 आज सार्वजनिक बिदा" : ""}${today.observances.isNotEmpty ? " · ${today.observances}" : ""}";
+        "${today.cleanYearLabel} (${today.weekdayName}) · ${today.gregorian.day} $gMonth ${today.gregorian.year} AD${today.isHoliday ? " 🔴 आज सार्वजनिक बिदा" : ""}${today.observances.isNotEmpty ? " · ${today.observances}" : ""}";
 
     final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       alertChannelId,

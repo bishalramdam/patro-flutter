@@ -223,8 +223,6 @@ class _ConverterViewState extends State<ConverterView> {
                         _buildResultRow("ईस्वी संवत् (AD):", "${_result!.gregFormatted} AD", isDark, false),
                         const SizedBox(height: 12),
                         _buildResultRow("बार (Weekday):", _result!.weekdayName ?? "", isDark, false),
-                        const SizedBox(height: 12),
-                        _buildResultRow("तिथि (Tithi):", _result!.tithiLabel ?? "", isDark, false),
 
                         if (_result!.observance != null && _result!.observance!.isNotEmpty) ...[
                           const SizedBox(height: 12),

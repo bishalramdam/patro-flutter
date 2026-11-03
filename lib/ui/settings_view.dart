@@ -253,7 +253,7 @@ class _SettingsViewState extends State<SettingsView> {
                       SwitchListTile(
                         title: const Text("लक-स्क्रिन र ब्यानर (Lock Screen Banner)"),
                         subtitle: const Text(
-                          "फोन लक हुँदा पनि स्क्रिनमा आजको मिति, बार र तिथि देखाइराख्ने",
+                          "फोन लक हुँदा पनि स्क्रिनमा आजको मिति र बार देखाइराख्ने",
                           style: TextStyle(fontSize: 12),
                         ),
                         value: _showLockScreenBanner,

@@ -325,7 +325,7 @@ class _CalendarViewState extends State<CalendarView> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              "${activeDay.gregorian.day} ${Nepali.gregorianShortMonths[activeDay.gregorian.month - 1]} ${activeDay.gregorian.year} AD · ${activeDay.tithiLabel}",
+                              "${activeDay.gregorian.day} ${Nepali.gregorianShortMonths[activeDay.gregorian.month - 1]} ${activeDay.gregorian.year} AD",
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -449,17 +449,6 @@ class _CalendarViewState extends State<CalendarView> {
                       : (isDark ? Colors.white38 : const Color(0xFF9CA3AF)),
                 ),
               ),
-              if (cell.isHoliday && !cell.isToday) ...[
-                const SizedBox(height: 1),
-                Container(
-                  width: 4,
-                  height: 4,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFEF4444),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ]
             ],
           ),
         ),
