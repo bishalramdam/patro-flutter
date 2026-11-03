@@ -24,6 +24,7 @@ class HomeScreenWidgetHelper {
       await HomeWidget.saveWidgetData<String>('gregorian_day', today.gregorian.day.toString());
       await HomeWidget.saveWidgetData<String>(
           'gregorian_month', Nepali.gregorianShortMonths[today.gregorian.month - 1]);
+      await HomeWidget.saveWidgetData<String>('gregorian_year', today.gregorian.year.toString());
       await HomeWidget.saveWidgetData<String>('tithi_label', today.tithiLabel);
       await HomeWidget.saveWidgetData<String>('observance', today.observances);
       await HomeWidget.saveWidgetData<bool>('is_holiday', today.isHoliday);

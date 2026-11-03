@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Mode Widget Colors -->
+    <color name="widget_background">#1E2530</color>
+    <color name="widget_border">#2E3846</color>
+    <color name="widget_weekday">#38BDF8</color>
+    <color name="widget_day">#F9FAFB</color>
+    <color name="widget_month_year">#E5E7EB</color>
+    <color name="widget_gregorian">#9CA3AF</color>
+    <color name="widget_holiday">#F87171</color>
+</resources>

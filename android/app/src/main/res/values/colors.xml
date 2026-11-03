@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light Mode Widget Colors -->
+    <color name="widget_background">#FFFFFF</color>
+    <color name="widget_border">#E5E7EB</color>
+    <color name="widget_weekday">#007AFF</color>
+    <color name="widget_day">#111827</color>
+    <color name="widget_month_year">#374151</color>
+    <color name="widget_gregorian">#6B7280</color>
+    <color name="widget_holiday">#EF4444</color>
+</resources>

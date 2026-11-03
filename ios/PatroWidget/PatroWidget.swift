@@ -133,23 +133,20 @@ struct PatroWidgetEntryView : View {
 
             Divider()
 
-            // Right: Gregorian & Tithi
+            // Right: Gregorian & Holiday/Observance
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("ईस्वी संवत् (AD)")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.secondary)
-                    Text("\(entry.gregDay) \(entry.gregMonth) 2026")
+                    Text("\(entry.gregDay) \(entry.gregMonth)")
                         .font(.system(size: 14, weight: .bold))
                 }
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("तिथि (Tithi)")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.secondary)
-                    Text(entry.tithi)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.purple)
+                if entry.isHoliday {
+                    Text("सार्वजनिक बिदा")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.red)
                 }
             }
             Spacer()

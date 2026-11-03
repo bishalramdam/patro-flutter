@@ -22,11 +22,12 @@ class PatroAppWidget : AppWidgetProvider() {
                 val weekday = widgetData.getString("weekday", "मङ्गलबार")
                 val gregDay = widgetData.getString("gregorian_day", "3")
                 val gregMonth = widgetData.getString("gregorian_month", "Nov")
+                val gregYear = widgetData.getString("gregorian_year", "2026")
 
                 setTextViewText(R.id.widget_day, day)
                 setTextViewText(R.id.widget_month_year, "$month $year")
                 setTextViewText(R.id.widget_weekday, weekday)
-                setTextViewText(R.id.widget_gregorian, "$gregDay $gregMonth 2026 AD")
+                setTextViewText(R.id.widget_gregorian, "$gregDay $gregMonth $gregYear AD")
             }
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
