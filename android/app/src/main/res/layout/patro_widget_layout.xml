@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/widget_background"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/widget_weekday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="मङ्गलबार"
+        android:textColor="#007AFF"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/widget_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="१७"
+        android:textColor="#111827"
+        android:textSize="44sp"
+        android:textStyle="bold"
+        android:includeFontPadding="false" />
+
+    <TextView
+        android:id="@+id/widget_month_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="कात्तिक २०८३"
+        android:textColor="#374151"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/widget_gregorian"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="3 Nov 2026 AD"
+        android:textColor="#6B7280"
+        android:textSize="12sp" />
+
+</LinearLayout>
