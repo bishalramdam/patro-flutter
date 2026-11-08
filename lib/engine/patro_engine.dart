@@ -122,9 +122,32 @@ class ConversionResult {
 class PatroEngine {
   static final PatroEngine instance = PatroEngine._internal();
 
-  String language = "Nepali";
-  String numerals = "Devanagari";
+  String _language = "Nepali";
+  String _numerals = "Devanagari";
   int weekStart = 0; // 0 = Sunday
+
+  String get language => _language;
+  set language(String val) {
+    _language = val;
+    if (_language == "English" && _numerals == "Devanagari") {
+      _numerals = "Latin";
+    } else if (_language == "Nepali" && _numerals == "Latin") {
+      _numerals = "Devanagari";
+    }
+  }
+
+  String get numerals => _numerals;
+  set numerals(String val) {
+    _numerals = val;
+  }
+
+  String formatNumber(int num) {
+    if (language == "English" || numerals == "Latin") {
+      return "$num";
+    } else {
+      return Nepali.numerals(num, "Devanagari");
+    }
+  }
 
   factory PatroEngine() {
     return instance;
