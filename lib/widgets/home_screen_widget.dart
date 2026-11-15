@@ -28,6 +28,9 @@ class HomeScreenWidgetHelper {
       await HomeWidget.saveWidgetData<String>('tithi_label', today.tithiLabel);
       await HomeWidget.saveWidgetData<String>('observance', today.observances);
       await HomeWidget.saveWidgetData<bool>('is_holiday', today.isHoliday);
+      await HomeWidget.saveWidgetData<bool>('is_english', engine.language == 'English');
+      await HomeWidget.saveWidgetData<bool>(
+          'is_latin_numerals', engine.language == 'English' || engine.numerals == 'Latin');
 
       // Trigger native widget update
       await HomeWidget.updateWidget(
