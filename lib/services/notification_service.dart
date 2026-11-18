@@ -14,7 +14,7 @@ class NotificationService {
   static const int ongoingNotificationId = 1001;
   static const int alertNotificationId = 1002;
 
-  static const String ongoingChannelId = 'patro_lockscreen_banner_channel_v2';
+  static const String ongoingChannelId = 'patro_lockscreen_banner_channel_v3';
   static const String alertChannelId = 'patro_alert_channel';
 
   factory NotificationService() {
@@ -86,14 +86,15 @@ class NotificationService {
       ongoingChannelId,
       'दैनिक पात्रो ब्यानर (Lock Screen Banner)',
       channelDescription: 'लक-स्क्रिन र नोटिफिकेसन बारमा आजको मिति देखाउँछ',
-      importance: Importance.low,
-      priority: Priority.low,
+      importance: Importance.defaultImportance,
+      priority: Priority.defaultPriority,
       ongoing: true, // Cannot be accidentally swiped away
       autoCancel: false,
       visibility: NotificationVisibility.public, // Fully visible on Locked Screen!
       showWhen: false,
       playSound: false,
       enableVibration: false,
+      onlyAlertOnce: true,
       icon: dayIcon,
       largeIcon: DrawableResourceAndroidBitmap(dayIcon),
       number: dayNumber,

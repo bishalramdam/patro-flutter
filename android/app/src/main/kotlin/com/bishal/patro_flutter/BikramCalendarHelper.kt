@@ -12,7 +12,8 @@ data class TodayDateData(
     val weekday: String,
     val gregorianDay: String,
     val gregorianMonth: String,
-    val gregorianYear: String
+    val gregorianYear: String,
+    val bsDayInt: Int = 1
 )
 
 object BikramCalendarHelper {
@@ -237,7 +238,8 @@ object BikramCalendarHelper {
             weekday = wdStr,
             gregorianDay = gDay.toString(),
             gregorianMonth = gMonthStr,
-            gregorianYear = gYear.toString()
+            gregorianYear = gYear.toString(),
+            bsDayInt = bs.day
         )
     }
 }

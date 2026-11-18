@@ -9,6 +9,7 @@ import '../engine/bikram.dart';
 import '../engine/calendar_data.dart';
 import '../engine/patro_engine.dart';
 import '../services/notification_service.dart';
+import '../widgets/home_screen_widget.dart';
 
 class SettingsView extends StatefulWidget {
   final PatroEngine engine;
@@ -52,6 +53,7 @@ class _SettingsViewState extends State<SettingsView> {
       final today = widget.engine.getToday();
       await NotificationService.instance.showOngoingDateBanner(today, statusIconNumeral: val);
     }
+    await HomeScreenWidgetHelper.updateWidgets(widget.engine);
   }
 
   Future<void> _toggleLockScreenBanner(bool enabled) async {
@@ -64,6 +66,7 @@ class _SettingsViewState extends State<SettingsView> {
     if (enabled) {
       final today = widget.engine.getToday();
       await NotificationService.instance.showOngoingDateBanner(today, statusIconNumeral: _statusBarNumeral);
+      await HomeScreenWidgetHelper.updateWidgets(widget.engine);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -74,6 +77,7 @@ class _SettingsViewState extends State<SettingsView> {
       }
     } else {
       await NotificationService.instance.cancelOngoingBanner();
+      await HomeScreenWidgetHelper.updateWidgets(widget.engine);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

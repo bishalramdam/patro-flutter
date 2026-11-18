@@ -2,6 +2,7 @@
 // Bridge to synchronize calendar data to native Android AppWidget & iOS WidgetKit.
 
 import 'package:home_widget/home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../engine/nepali.dart';
 import '../engine/patro_engine.dart';
 
@@ -31,6 +32,13 @@ class HomeScreenWidgetHelper {
       await HomeWidget.saveWidgetData<bool>('is_english', engine.language == 'English');
       await HomeWidget.saveWidgetData<bool>(
           'is_latin_numerals', engine.language == 'English' || engine.numerals == 'Latin');
+
+      final prefs = await SharedPreferences.getInstance();
+      final bool showBanner = prefs.getBool('show_lockscreen_banner') ?? true;
+      final String statusBarNumeral = prefs.getString('status_bar_numeral') ??
+          ((engine.language == 'English' || engine.numerals == 'Latin') ? 'Latin' : 'Devanagari');
+      await HomeWidget.saveWidgetData<bool>('show_lockscreen_banner', showBanner);
+      await HomeWidget.saveWidgetData<String>('status_bar_numeral', statusBarNumeral);
 
       // Trigger native widget update
       await HomeWidget.updateWidget(

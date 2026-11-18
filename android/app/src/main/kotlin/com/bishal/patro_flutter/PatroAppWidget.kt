@@ -25,7 +25,10 @@ class PatroAppWidget : AppWidgetProvider() {
             val appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
             if (appWidgetIds != null && appWidgetIds.isNotEmpty()) {
                 updateWidgetViews(context, appWidgetManager, appWidgetIds)
+            } else {
+                scheduleMidnightAlarm(context)
             }
+            PatroNotificationHelper.updateOngoingNotification(context)
         }
 
         fun updateWidgetViews(
@@ -67,6 +70,7 @@ class PatroAppWidget : AppWidgetProvider() {
 
             // Schedule the next midnight update alarm
             scheduleMidnightAlarm(context)
+            PatroNotificationHelper.updateOngoingNotification(context)
         }
 
         fun scheduleMidnightAlarm(context: Context) {
