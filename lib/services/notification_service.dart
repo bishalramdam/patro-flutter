@@ -82,6 +82,14 @@ class NotificationService {
     final String gMonth = Nepali.gregorianShortMonths[today.gregorian.month - 1];
     final String body = "${today.gregorian.day} $gMonth ${today.gregorian.year} AD";
 
+    final StringBuffer expandedText = StringBuffer(body);
+    if (today.tithiLabel.isNotEmpty) {
+      expandedText.write('\n• ${today.tithiLabel}');
+    }
+    if (today.observances.isNotEmpty) {
+      expandedText.write('\n• ${today.observances}');
+    }
+
     final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       ongoingChannelId,
       'दैनिक क्यालेन्डर ब्यानर (Lock Screen Banner)',
@@ -98,9 +106,11 @@ class NotificationService {
       icon: dayIcon,
       largeIcon: DrawableResourceAndroidBitmap(dayIcon),
       number: dayNumber,
+      subText: today.tithiLabel.isNotEmpty ? today.tithiLabel : null,
       styleInformation: BigTextStyleInformation(
-        body,
+        expandedText.toString(),
         contentTitle: title,
+        summaryText: today.tithiLabel.isNotEmpty ? today.tithiLabel : null,
       ),
     );
 

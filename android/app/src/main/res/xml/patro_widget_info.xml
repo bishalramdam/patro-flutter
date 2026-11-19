@@ -7,4 +7,4 @@
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/patro_widget_layout"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen" />
+    android:widgetCategory="home_screen|keyguard" />

@@ -4,10 +4,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.widget.RemoteViews
 import es.antonborri.home_widget.HomeWidgetPlugin
 import java.util.Calendar
@@ -28,6 +30,8 @@ class PatroAppWidget : AppWidgetProvider() {
             } else {
                 scheduleMidnightAlarm(context)
             }
+            // Also update dedicated lock widget and ongoing notification
+            CalendarLockWidget.updateAllWidgets(context)
             PatroNotificationHelper.updateOngoingNotification(context)
         }
 
@@ -55,15 +59,32 @@ class PatroAppWidget : AppWidgetProvider() {
             )
 
             for (appWidgetId in appWidgetIds) {
-                val views = RemoteViews(context.packageName, R.layout.patro_widget_layout).apply {
-                    setTextViewText(R.id.widget_day, today.bsDay)
-                    setTextViewText(R.id.widget_month_year, "${today.bsMonth} ${today.bsYear}")
-                    setTextViewText(R.id.widget_weekday, today.weekday)
-                    setTextViewText(
-                        R.id.widget_gregorian,
-                        "${today.gregorianDay} ${today.gregorianMonth} ${today.gregorianYear} AD"
-                    )
-                    setOnClickPendingIntent(R.id.widget_root, pendingIntent)
+                val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
+                val category = options.getInt(
+                    AppWidgetManager.OPTION_APPWIDGET_HOST_CATEGORY,
+                    AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN
+                )
+                val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 140)
+                val isKeyguard = (category == AppWidgetProviderInfo.WIDGET_CATEGORY_KEYGUARD) || (minWidth < 100)
+
+                val views = if (isKeyguard) {
+                    RemoteViews(context.packageName, R.layout.calendar_lock_widget_layout).apply {
+                        setTextViewText(R.id.lock_widget_month, today.bsMonth)
+                        setTextViewText(R.id.lock_widget_day, today.bsDay)
+                        setTextViewText(R.id.lock_widget_weekday, today.weekday)
+                        setOnClickPendingIntent(R.id.lock_widget_root, pendingIntent)
+                    }
+                } else {
+                    RemoteViews(context.packageName, R.layout.patro_widget_layout).apply {
+                        setTextViewText(R.id.widget_day, today.bsDay)
+                        setTextViewText(R.id.widget_month_year, "${today.bsMonth} ${today.bsYear}")
+                        setTextViewText(R.id.widget_weekday, today.weekday)
+                        setTextViewText(
+                            R.id.widget_gregorian,
+                            "${today.gregorianDay} ${today.gregorianMonth} ${today.gregorianYear} AD"
+                        )
+                        setOnClickPendingIntent(R.id.widget_root, pendingIntent)
+                    }
                 }
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             }
@@ -127,7 +148,6 @@ class PatroAppWidget : AppWidgetProvider() {
                     )
                 }
             } catch (e: SecurityException) {
-                // In case exact alarm permission is restricted
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
@@ -145,6 +165,16 @@ class PatroAppWidget : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         updateWidgetViews(context, appWidgetManager, appWidgetIds)
+    }
+
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: Bundle?
+    ) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        updateWidgetViews(context, appWidgetManager, intArrayOf(appWidgetId))
     }
 
     override fun onReceive(context: Context, intent: Intent) {
