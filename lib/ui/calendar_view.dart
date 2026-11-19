@@ -249,22 +249,22 @@ class _CalendarViewState extends State<CalendarView> {
                   width: width,
                   height: menuHeight,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2530) : Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+                    color: isDark ? const Color(0xFF181A1F) : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isDark ? Colors.white24 : Colors.black12,
-                      width: 0.5,
+                      color: isDark ? const Color(0xFF272A30) : const Color(0xFFE5E7EB),
+                      width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.4 : 0.15),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
+                        color: Colors.black.withOpacity(isDark ? 0.6 : 0.12),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                     child: ListView.builder(
                       controller: scrollController,
                       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -280,9 +280,9 @@ class _CalendarViewState extends State<CalendarView> {
                             onSelect(item.id);
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             color: isSelected
-                                ? const Color(0xFF007AFF)
+                                ? (isDark ? const Color(0xFF272A30) : const Color(0xFFE5E7EB))
                                 : Colors.transparent,
                             alignment: Alignment.centerLeft,
                             child: Row(
@@ -296,16 +296,16 @@ class _CalendarViewState extends State<CalendarView> {
                                       fontSize: 11.5,
                                       fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                       color: isSelected
-                                          ? Colors.white
-                                          : (isDark ? Colors.white : const Color(0xFF1F2937)),
+                                          ? (isDark ? Colors.white : const Color(0xFF18181B))
+                                          : (isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B)),
                                     ),
                                   ),
                                 ),
                                 if (isSelected)
-                                  const Icon(
+                                  Icon(
                                     Icons.check_rounded,
                                     size: 13,
-                                    color: Colors.white,
+                                    color: isDark ? Colors.white : const Color(0xFF18181B),
                                   ),
                               ],
                             ),
@@ -352,7 +352,7 @@ class _CalendarViewState extends State<CalendarView> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F141C) : const Color(0xFFF6F8FA),
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF4F5F7),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -361,311 +361,388 @@ class _CalendarViewState extends State<CalendarView> {
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 22,
-            color: isDark ? Colors.white : const Color(0xFF1F2937),
+            letterSpacing: -0.3,
+            color: isDark ? Colors.white : const Color(0xFF18181B),
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: TextButton.icon(
-              style: TextButton.styleFrom(
-                backgroundColor: isCurrentMonth
-                    ? (isDark ? Colors.white12 : Colors.black.withOpacity(0.05))
-                    : const Color(0xFF007AFF),
-                foregroundColor: isCurrentMonth
-                    ? (isDark ? Colors.white70 : const Color(0xFF4B5563))
-                    : Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF181A1F) : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isDark ? const Color(0xFF272A30) : const Color(0xFFE4E4E7),
+                width: 1,
               ),
-              onPressed: _goToToday,
-              icon: const Icon(Icons.today_rounded, size: 16),
-              label: const Text("आज", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
             ),
-          )
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: _goToToday,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.today_rounded,
+                        size: 15,
+                        color: isDark ? Colors.white : const Color(0xFF18181B),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        widget.engine.language == "English" ? "Today" : "आज",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12.5,
+                          color: isDark ? Colors.white : const Color(0xFF18181B),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Month navigation card
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E2530) : Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    )
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.chevron_left_rounded, size: 28),
-                          color: const Color(0xFF007AFF),
-                          onPressed: _previousMonth,
-                        ),
-                        // Clickable Month & Year Header to toggle Date Selector
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            _closeDropdown();
-                            setState(() {
-                              showDateSelector = !showDateSelector;
-                            });
-                          },
-                          child: Column(
-                            children: [
-                              Row(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 4),
+
+              // Unified Architectural Calendar Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF121316) : Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 1. Month Navigation Header
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildNavButton(
+                              icon: Icons.chevron_left_rounded,
+                              onTap: _previousMonth,
+                              isDark: isDark,
+                            ),
+
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                _closeDropdown();
+                                setState(() {
+                                  showDateSelector = !showDateSelector;
+                                });
+                              },
+                              child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    monthData.title,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: isDark ? Colors.white : const Color(0xFF111827),
-                                    ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        monthData.title,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: -0.3,
+                                          color: isDark ? Colors.white : const Color(0xFF18181B),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Icon(
+                                        showDateSelector
+                                            ? Icons.keyboard_arrow_up_rounded
+                                            : Icons.keyboard_arrow_down_rounded,
+                                        size: 18,
+                                        color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 4),
-                                  Icon(
-                                    showDateSelector
-                                        ? Icons.keyboard_arrow_up_rounded
-                                        : Icons.keyboard_arrow_down_rounded,
-                                    size: 20,
-                                    color: showDateSelector
-                                        ? const Color(0xFF007AFF)
-                                        : (isDark ? Colors.white54 : const Color(0xFF6B7280)),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    monthData.gregorianSpan,
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.w500,
+                                      color: isDark ? const Color(0xFF71717A) : const Color(0xFF71717A),
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                monthData.gregorianSpan,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: isDark ? Colors.white54 : const Color(0xFF6B7280),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.chevron_right_rounded, size: 28),
-                          color: const Color(0xFF007AFF),
-                          onPressed: _nextMonth,
-                        ),
-                      ],
-                    ),
-
-                    // Direct Date Selector Bar (revealed on tapping the Month & Year header)
-                    if (showDateSelector) ...[
-                      const SizedBox(height: 10),
-                      Divider(height: 1, color: isDark ? Colors.white12 : Colors.black12),
-                      const SizedBox(height: 10),
-                      _buildDateSelectorBar(activeDay, isDark),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-
-            // Weekday header bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-              child: Row(
-                children: [
-                  for (int i = 0; i < 7; i++)
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          Nepali.weekdayShort(i, widget.engine.language),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: i == 6
-                                ? const Color(0xFFEF4444) // Saturday in subtle red
-                                : (isDark ? Colors.white60 : const Color(0xFF6B7280)),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-
-            // 7x6 Calendar Grid
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2530) : Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      for (var week in monthData.weeks)
-                        Expanded(
-                          child: Row(
-                            children: [
-                              for (var cell in week)
-                                Expanded(
-                                  child: cell == null
-                                      ? const SizedBox.shrink()
-                                      : _buildDayCell(cell, activeDay, isDark),
-                                ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Selected Day Detail Card
-            if (activeDay != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2530) : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: activeDay.isToday
-                          ? const Color(0xFF007AFF).withOpacity(0.3)
-                          : Colors.transparent,
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Date bubble
-                      Container(
-                        width: 52,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: activeDay.isToday
-                              ? const Color(0xFF007AFF)
-                              : (activeDay.isSaturday
-                                  ? const Color(0xFFEF4444).withOpacity(0.12)
-                                  : (isDark ? Colors.white10 : const Color(0xFFF3F4F6))),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Center(
-                          child: Text(
-                            activeDay.dayText,
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              color: activeDay.isToday
-                                  ? Colors.white
-                                  : (activeDay.isSaturday
-                                      ? const Color(0xFFEF4444)
-                                      : (isDark ? Colors.white : const Color(0xFF111827))),
                             ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 14),
 
-                      // Date description
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "${activeDay.dayText} ${Nepali.monthName(activeDay.month, widget.engine.language)} ${widget.engine.formatNumber(activeDay.year)}",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: isDark ? Colors.white : const Color(0xFF111827),
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "(${Nepali.weekdayName(activeDay.weekday, widget.engine.language)})",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: activeDay.isSaturday
-                                        ? const Color(0xFFEF4444)
-                                        : (isDark ? Colors.white60 : const Color(0xFF6B7280)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "${activeDay.gregorian.day} ${Nepali.gregorianShortMonths[activeDay.gregorian.month - 1]} ${activeDay.gregorian.year} AD",
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: isDark ? Colors.white54 : const Color(0xFF6B7280),
-                              ),
+                            _buildNavButton(
+                              icon: Icons.chevron_right_rounded,
+                              onTap: _nextMonth,
+                              isDark: isDark,
                             ),
                           ],
                         ),
                       ),
 
-                      // Copy button
-                      IconButton(
-                        tooltip: "प्रतिलिपि गर्नुहोस् (Copy Date)",
-                        icon: const Icon(Icons.copy_rounded, size: 20),
-                        color: isDark ? Colors.white60 : const Color(0xFF6B7280),
-                        onPressed: () {
-                          String copyText =
-                              "${activeDay!.dayText} ${Nepali.monthName(activeDay.month, widget.engine.language)} ${widget.engine.formatNumber(activeDay.year)} (${activeDay.gregorian.year}-${activeDay.gregorian.month.toString().padLeft(2, '0')}-${activeDay.gregorian.day.toString().padLeft(2, '0')})";
-                          Clipboard.setData(ClipboardData(text: copyText));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("मिति कपी गरियो: $copyText"),
-                              duration: const Duration(seconds: 2),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        },
+                      // Direct Date Selector Bar (when open)
+                      if (showDateSelector) ...[
+                        Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: _buildDateSelectorBar(activeDay, isDark),
+                        ),
+                      ],
+
+                      Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
+
+                      // 2. Weekday Header Row
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                        child: Row(
+                          children: [
+                            for (int i = 0; i < 7; i++)
+                              Expanded(
+                                child: Center(
+                                  child: Text(
+                                    Nepali.weekdayShort(i, widget.engine.language),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: i == 6
+                                          ? const Color(0xFFFF453A)
+                                          : (isDark ? const Color(0xFF71717A) : const Color(0xFF71717A)),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+
+                      Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
+
+                      // 3. Proportional, Even Grid of Days
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            for (var week in monthData.weeks)
+                              Container(
+                                height: 48,
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                child: Row(
+                                  children: [
+                                    for (var cell in week)
+                                      Expanded(
+                                        child: cell == null
+                                            ? const SizedBox.shrink()
+                                            : _buildDayCell(cell, activeDay, isDark),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-            const SizedBox(height: 8),
-          ],
+
+              const SizedBox(height: 14),
+
+              // 4. Selected Day Detail Card
+              if (activeDay != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF121316) : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Left Date Badge
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: activeDay.isToday
+                                ? Colors.white
+                                : (activeDay.isSaturday
+                                    ? const Color(0xFFFF453A).withOpacity(0.12)
+                                    : (isDark ? const Color(0xFF1C1E22) : const Color(0xFFF4F5F7))),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: activeDay.isToday
+                                  ? Colors.transparent
+                                  : (isDark ? const Color(0xFF2A2D34) : const Color(0xFFE5E7EB)),
+                              width: 1,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              activeDay.dayText,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                color: activeDay.isToday
+                                    ? Colors.black
+                                    : (activeDay.isSaturday
+                                        ? const Color(0xFFFF453A)
+                                        : (isDark ? Colors.white : const Color(0xFF18181B))),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+
+                        // Date & Observance details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      "${activeDay.dayText} ${Nepali.monthName(activeDay.month, widget.engine.language)} ${widget.engine.formatNumber(activeDay.year)}",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        color: isDark ? Colors.white : const Color(0xFF18181B),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    "(${Nepali.weekdayName(activeDay.weekday, widget.engine.language)})",
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w500,
+                                      color: activeDay.isSaturday
+                                          ? const Color(0xFFFF453A)
+                                          : (isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                "${activeDay.gregorian.day} ${Nepali.gregorianShortMonths[activeDay.gregorian.month - 1]} ${activeDay.gregorian.year} AD",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: isDark ? const Color(0xFF71717A) : const Color(0xFF71717A),
+                                ),
+                              ),
+                              if (activeDay.observanceSummary.isNotEmpty) ...[
+                                const SizedBox(height: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: activeDay.isHoliday
+                                        ? const Color(0xFFFF453A).withOpacity(0.12)
+                                        : (isDark ? const Color(0xFF1C1E22) : const Color(0xFFF4F5F7)),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    activeDay.observanceSummary,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: activeDay.isHoliday
+                                          ? const Color(0xFFFF453A)
+                                          : (isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B)),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+
+                        // Quick-copy button
+                        IconButton(
+                          tooltip: "कपी (Copy Date)",
+                          icon: const Icon(Icons.copy_rounded, size: 18),
+                          color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                          onPressed: () {
+                            HapticFeedback.lightImpact();
+                            String copyText =
+                                "${activeDay!.dayText} ${Nepali.monthName(activeDay.month, widget.engine.language)} ${widget.engine.formatNumber(activeDay.year)} (${activeDay.gregorian.year}-${activeDay.gregorian.month.toString().padLeft(2, '0')}-${activeDay.gregorian.day.toString().padLeft(2, '0')})";
+                            Clipboard.setData(ClipboardData(text: copyText));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("मिति कपी गरियो: $copyText"),
+                                duration: const Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF181A1F) : const Color(0xFFF4F5F7),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? const Color(0xFF272A30) : const Color(0xFFE5E7EB),
+          width: 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Icon(
+            icon,
+            size: 20,
+            color: isDark ? Colors.white : const Color(0xFF18181B),
+          ),
         ),
       ),
     );
@@ -846,7 +923,9 @@ class _CalendarViewState extends State<CalendarView> {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF007AFF) : Colors.transparent,
+          color: isSelected
+              ? (isDark ? Colors.white : const Color(0xFF18181B))
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
@@ -855,8 +934,8 @@ class _CalendarViewState extends State<CalendarView> {
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             color: isSelected
-                ? Colors.white
-                : (isDark ? Colors.white60 : const Color(0xFF6B7280)),
+                ? (isDark ? Colors.black : Colors.white)
+                : (isDark ? const Color(0xFF71717A) : const Color(0xFF71717A)),
           ),
         ),
       ),
@@ -879,14 +958,14 @@ class _CalendarViewState extends State<CalendarView> {
         padding: const EdgeInsets.symmetric(horizontal: 6),
         decoration: BoxDecoration(
           color: isOpen
-              ? const Color(0xFF007AFF).withOpacity(0.15)
-              : (isDark ? Colors.white10 : const Color(0xFFF3F4F6)),
+              ? (isDark ? const Color(0xFF22242A) : const Color(0xFFE5E7EB))
+              : (isDark ? const Color(0xFF181A1F) : const Color(0xFFF4F5F7)),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isOpen
-                ? const Color(0xFF007AFF)
-                : (isDark ? Colors.white12 : Colors.black12),
-            width: isOpen ? 1 : 0.5,
+                ? (isDark ? Colors.white54 : const Color(0xFF18181B))
+                : (isDark ? const Color(0xFF272A30) : const Color(0xFFE5E7EB)),
+            width: isOpen ? 1 : 0.8,
           ),
         ),
         child: Row(
@@ -901,8 +980,8 @@ class _CalendarViewState extends State<CalendarView> {
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
                   color: isOpen
-                      ? const Color(0xFF007AFF)
-                      : (isDark ? Colors.white : const Color(0xFF1F2937)),
+                      ? (isDark ? Colors.white : const Color(0xFF18181B))
+                      : (isDark ? Colors.white : const Color(0xFF18181B)),
                 ),
               ),
             ),
@@ -911,8 +990,8 @@ class _CalendarViewState extends State<CalendarView> {
               isOpen ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
               size: 14,
               color: isOpen
-                  ? const Color(0xFF007AFF)
-                  : (isDark ? Colors.white54 : const Color(0xFF9CA3AF)),
+                  ? (isDark ? Colors.white : const Color(0xFF18181B))
+                  : (isDark ? const Color(0xFF71717A) : const Color(0xFF9CA3AF)),
             ),
           ],
         ),
@@ -928,61 +1007,66 @@ class _CalendarViewState extends State<CalendarView> {
 
     Color textColor;
     if (cell.isToday) {
-      textColor = Colors.white;
+      textColor = Colors.black;
     } else if (cell.isSaturday) {
-      textColor = const Color(0xFFEF4444);
+      textColor = const Color(0xFFFF453A);
     } else {
-      textColor = isDark ? Colors.white : const Color(0xFF1F2937);
+      textColor = isDark ? Colors.white : const Color(0xFF18181B);
     }
 
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () {
+        HapticFeedback.selectionClick();
         _closeDropdown();
         setState(() {
           selectedDay = cell;
         });
       },
-      child: Container(
-        margin: const EdgeInsets.all(2),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
         decoration: BoxDecoration(
           color: cell.isToday
-              ? const Color(0xFF007AFF)
+              ? Colors.white
               : (isSelected
-                  ? (isDark ? Colors.white12 : const Color(0xFF007AFF).withOpacity(0.1))
+                  ? (isDark ? const Color(0xFF22242A) : const Color(0xFFE5E7EB))
                   : Colors.transparent),
           borderRadius: BorderRadius.circular(12),
           border: isSelected && !cell.isToday
-              ? Border.all(color: const Color(0xFF007AFF), width: 1.5)
+              ? Border.all(
+                  color: isDark ? const Color(0xFF52525B) : const Color(0xFF9CA3AF),
+                  width: 1.2,
+                )
               : null,
         ),
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                cell.dayText,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: cell.isToday ? FontWeight.w800 : FontWeight.w600,
-                  color: textColor,
-                ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              cell.dayText,
+              style: TextStyle(
+                fontSize: 15.5,
+                fontWeight: cell.isToday
+                    ? FontWeight.w800
+                    : (isSelected ? FontWeight.w700 : FontWeight.w600),
+                color: textColor,
               ),
-              const SizedBox(height: 1),
-              Text(
-                cell.gregorianDayText,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: cell.isToday
-                      ? Colors.white.withOpacity(0.8)
-                      : (isDark ? Colors.white38 : const Color(0xFF9CA3AF)),
-                ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              cell.gregorianDayText,
+              style: TextStyle(
+                fontSize: 9.5,
+                fontWeight: FontWeight.w500,
+                color: cell.isToday
+                    ? const Color(0xFF3F3F46)
+                    : (cell.isSaturday
+                        ? const Color(0xFFFF453A).withOpacity(0.65)
+                        : (isDark ? const Color(0xFF71717A) : const Color(0xFF9CA3AF))),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

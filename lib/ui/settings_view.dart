@@ -167,7 +167,7 @@ class _SettingsViewState extends State<SettingsView> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F141C) : const Color(0xFFF6F8FA),
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF4F5F7),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -176,7 +176,8 @@ class _SettingsViewState extends State<SettingsView> {
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 22,
-            color: isDark ? Colors.white : const Color(0xFF1F2937),
+            letterSpacing: -0.3,
+            color: isDark ? Colors.white : const Color(0xFF18181B),
           ),
         ),
       ),
@@ -189,18 +190,15 @@ class _SettingsViewState extends State<SettingsView> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2530) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ],
+                color: isDark ? const Color(0xFF121316) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB),
+                  width: 1,
+                ),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 child: Material(
                   color: Colors.transparent,
                   child: Column(
@@ -213,6 +211,7 @@ class _SettingsViewState extends State<SettingsView> {
                         trailing: DropdownButton<String>(
                           value: widget.engine.numerals,
                           underline: const SizedBox(),
+                          dropdownColor: isDark ? const Color(0xFF181A1F) : Colors.white,
                           items: const [
                             DropdownMenuItem(value: "Devanagari", child: Text("देवनागरी")),
                             DropdownMenuItem(value: "Latin", child: Text("English")),
@@ -227,13 +226,14 @@ class _SettingsViewState extends State<SettingsView> {
                           },
                         ),
                       ),
-                      const Divider(height: 1),
+                      Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
                       ListTile(
                         title: const Text("भाषा (Language)"),
                         subtitle: Text(widget.engine.language == "Nepali" ? "नेपाली (Nepali)" : "English"),
                         trailing: DropdownButton<String>(
                           value: widget.engine.language,
                           underline: const SizedBox(),
+                          dropdownColor: isDark ? const Color(0xFF181A1F) : Colors.white,
                           items: const [
                             DropdownMenuItem(value: "Nepali", child: Text("नेपाली")),
                             DropdownMenuItem(value: "English", child: Text("English")),
@@ -260,18 +260,15 @@ class _SettingsViewState extends State<SettingsView> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2530) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ],
+                color: isDark ? const Color(0xFF121316) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB),
+                  width: 1,
+                ),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 child: Material(
                   color: Colors.transparent,
                   child: Column(
@@ -283,12 +280,12 @@ class _SettingsViewState extends State<SettingsView> {
                           style: TextStyle(fontSize: 12),
                         ),
                         value: _showLockScreenBanner,
-                        activeColor: const Color(0xFF007AFF),
+                        activeColor: isDark ? Colors.white : const Color(0xFF18181B),
                         onChanged: _toggleLockScreenBanner,
                       ),
-                      const Divider(height: 1),
+                      Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
                       ListTile(
-                        leading: const Icon(Icons.pin_rounded, color: Color(0xFF007AFF)),
+                        leading: Icon(Icons.pin_rounded, color: isDark ? Colors.white : const Color(0xFF18181B)),
                         title: const Text("स्ट्याटस बार आइकन (Status Bar Icon Day)"),
                         subtitle: Text(
                           _statusBarNumeral == "Latin" ? "अंग्रेजी गते (17)" : "नेपाली गते (१७)",
@@ -296,6 +293,7 @@ class _SettingsViewState extends State<SettingsView> {
                         trailing: DropdownButton<String>(
                           value: _statusBarNumeral,
                           underline: const SizedBox(),
+                          dropdownColor: isDark ? const Color(0xFF181A1F) : Colors.white,
                           items: const [
                             DropdownMenuItem(value: "Latin", child: Text("17 (English)")),
                             DropdownMenuItem(value: "Devanagari", child: Text("१७ (नेपाली)")),
@@ -307,9 +305,9 @@ class _SettingsViewState extends State<SettingsView> {
                           },
                         ),
                       ),
-                      const Divider(height: 1),
+                      Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
                       ListTile(
-                        leading: const Icon(Icons.notifications_active_rounded, color: Color(0xFF007AFF)),
+                        leading: Icon(Icons.notifications_active_rounded, color: isDark ? Colors.white : const Color(0xFF18181B)),
                         title: const Text("सामान्य सूचना परीक्षण (Test Alert Banner)"),
                         subtitle: const Text("तत्काल पप-अप ब्यानर सूचना पठाएर हेर्नुहोस्", style: TextStyle(fontSize: 12)),
                         trailing: const Icon(Icons.chevron_right_rounded),
@@ -328,29 +326,26 @@ class _SettingsViewState extends State<SettingsView> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2530) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ],
+                color: isDark ? const Color(0xFF121316) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB),
+                  width: 1,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.sync_rounded, color: Color(0xFF007AFF), size: 24),
+                      Icon(Icons.sync_rounded, color: isDark ? Colors.white : const Color(0xFF18181B), size: 24),
                       const SizedBox(width: 8),
                       Text(
                         "पञ्चाङ्ग समिति डेटा सिङ्क",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.white : const Color(0xFF111827),
+                          color: isDark ? Colors.white : const Color(0xFF18181B),
                         ),
                       ),
                     ],
@@ -361,7 +356,7 @@ class _SettingsViewState extends State<SettingsView> {
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.4,
-                      color: isDark ? Colors.white70 : const Color(0xFF4B5563),
+                      color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -369,23 +364,24 @@ class _SettingsViewState extends State<SettingsView> {
                     children: [
                       _buildBadge("प्रमाणित: ${CalendarData.attestedThrough} सम्म", const Color(0xFF10B981)),
                       const SizedBox(width: 8),
-                      _buildBadge("स्वीकृत: ${CalendarData.publishedThrough} सम्म", const Color(0xFF007AFF)),
+                      _buildBadge("स्वीकृत: ${CalendarData.publishedThrough} सम्म", isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B)),
                     ],
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF007AFF),
-                      foregroundColor: Colors.white,
+                      backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+                      foregroundColor: isDark ? Colors.black : Colors.white,
                       minimumSize: const Size.fromHeight(46),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 0,
                     ),
                     onPressed: _isCheckingUpdate ? null : _checkGithubUpdate,
                     icon: _isCheckingUpdate
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 18,
                             height: 18,
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            child: CircularProgressIndicator(color: isDark ? Colors.black : Colors.white, strokeWidth: 2),
                           )
                         : const Icon(Icons.download_rounded, size: 20),
                     label: Text(
@@ -400,7 +396,7 @@ class _SettingsViewState extends State<SettingsView> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: _syncSuccess ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                        color: _syncSuccess ? const Color(0xFF10B981) : const Color(0xFFFF453A),
                       ),
                     ),
                   ]
@@ -415,29 +411,26 @@ class _SettingsViewState extends State<SettingsView> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2530) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ],
+                color: isDark ? const Color(0xFF121316) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB),
+                  width: 1,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.widgets_rounded, color: Color(0xFF007AFF), size: 22),
+                      Icon(Icons.widgets_rounded, color: isDark ? Colors.white : const Color(0xFF18181B), size: 22),
                       const SizedBox(width: 8),
                       Text(
                         "विजेट थप्ने तरिका",
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.white : const Color(0xFF111827),
+                          color: isDark ? Colors.white : const Color(0xFF18181B),
                         ),
                       ),
                     ],
@@ -448,7 +441,7 @@ class _SettingsViewState extends State<SettingsView> {
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.5,
-                      color: isDark ? Colors.white70 : const Color(0xFF4B5563),
+                      color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B),
                     ),
                   ),
                 ],
@@ -469,7 +462,7 @@ class _SettingsViewState extends State<SettingsView> {
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          color: isDark ? Colors.white54 : const Color(0xFF6B7280),
+          color: isDark ? const Color(0xFF71717A) : const Color(0xFF71717A),
           letterSpacing: 0.5,
         ),
       ),

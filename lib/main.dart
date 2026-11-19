@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'engine/patro_engine.dart';
 import 'services/notification_service.dart';
 import 'ui/calendar_view.dart';
-import 'ui/converter_view.dart';
 import 'ui/settings_view.dart';
 import 'widgets/home_screen_widget.dart';
 
@@ -65,20 +64,21 @@ class PatroApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
-        scaffoldBackgroundColor: const Color(0xFFF6F8FA),
+        scaffoldBackgroundColor: const Color(0xFFF4F5F7),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF007AFF),
+          seedColor: const Color(0xFF18181B),
           brightness: Brightness.light,
         ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0F141C),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF007AFF),
-          brightness: Brightness.dark,
-          surface: const Color(0xFF161B22),
+        scaffoldBackgroundColor: Colors.black,
+        colorScheme: const ColorScheme.dark(
+          background: Colors.black,
+          surface: Color(0xFF121316),
+          primary: Colors.white,
+          secondary: Color(0xFFD71921),
         ),
       ),
       home: PatroHomeScreen(engine: engine),
@@ -109,62 +109,52 @@ class _PatroHomeScreenState extends State<PatroHomeScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F141C) : const Color(0xFFF6F8FA),
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF4F5F7),
       body: IndexedStack(
         index: _currentIndex,
         children: [
           CalendarView(engine: widget.engine, onStateChanged: _onStateChanged),
-          ConverterView(engine: widget.engine),
           SettingsView(engine: widget.engine, onStateChanged: _onStateChanged),
         ],
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF161B22) : Colors.white,
+          color: isDark ? Colors.black : Colors.white,
           border: Border(
             top: BorderSide(
-              color: isDark ? const Color(0xFF252E3E) : const Color(0xFFE5E7EB),
+              color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB),
               width: 0.8,
             ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.35 : 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -3),
-            )
-          ],
         ),
         child: SafeArea(
           child: NavigationBarTheme(
             data: NavigationBarThemeData(
               backgroundColor: Colors.transparent,
-              indicatorColor: isDark
-                  ? const Color(0xFF007AFF).withOpacity(0.24)
-                  : const Color(0xFF007AFF).withOpacity(0.12),
-              indicatorShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              indicatorColor: isDark ? const Color(0xFF22242A) : const Color(0xFFE5E7EB),
+              indicatorShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               iconTheme: MaterialStateProperty.resolveWith((states) {
                 if (states.contains(MaterialState.selected)) {
-                  return IconThemeData(
-                    color: isDark ? const Color(0xFF38BDF8) : const Color(0xFF007AFF),
-                    size: 24,
+                  return const IconThemeData(
+                    color: Colors.white,
+                    size: 22,
                   );
                 }
                 return IconThemeData(
-                  color: isDark ? const Color(0xFF8B949E) : const Color(0xFF6B7280),
-                  size: 24,
+                  color: isDark ? const Color(0xFF71717A) : const Color(0xFF9CA3AF),
+                  size: 22,
                 );
               }),
               labelTextStyle: MaterialStateProperty.resolveWith((states) {
                 if (states.contains(MaterialState.selected)) {
                   return TextStyle(
-                    color: isDark ? const Color(0xFF38BDF8) : const Color(0xFF007AFF),
-                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white : const Color(0xFF18181B),
+                    fontWeight: FontWeight.w600,
                     fontSize: 12,
                   );
                 }
                 return TextStyle(
-                  color: isDark ? const Color(0xFF8B949E) : const Color(0xFF6B7280),
+                  color: isDark ? const Color(0xFF71717A) : const Color(0xFF9CA3AF),
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
                 );
@@ -179,22 +169,17 @@ class _PatroHomeScreenState extends State<PatroHomeScreen> {
               },
               backgroundColor: Colors.transparent,
               elevation: 0,
-              height: 64,
+              height: 60,
               destinations: [
                 NavigationDestination(
-                  icon: const Icon(Icons.calendar_month_outlined),
-                  selectedIcon: const Icon(Icons.calendar_month_rounded),
+                  icon: const Icon(Icons.calendar_today_outlined),
+                  selectedIcon: const Icon(Icons.calendar_today_rounded),
                   label: widget.engine.language == 'English' ? 'Calendar' : 'क्यालेन्डर',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.swap_horiz_outlined),
-                  selectedIcon: Icon(Icons.swap_horiz_rounded),
-                  label: 'रूपान्तरक',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.settings_outlined),
-                  selectedIcon: Icon(Icons.settings_rounded),
-                  label: 'सेटिङ',
+                  icon: const Icon(Icons.settings_outlined),
+                  selectedIcon: const Icon(Icons.settings_rounded),
+                  label: widget.engine.language == 'English' ? 'Settings' : 'सेटिङ',
                 ),
               ],
             ),
