@@ -83,12 +83,13 @@ class NotificationService {
     final String body = "${today.gregorian.day} $gMonth ${today.gregorian.year} AD";
 
     final StringBuffer expandedText = StringBuffer(body);
-    if (today.tithiLabel.isNotEmpty) {
-      expandedText.write('\n• ${today.tithiLabel}');
-    }
     if (today.observances.isNotEmpty) {
       expandedText.write('\n• ${today.observances}');
     }
+
+    final String contentText = today.observances.isNotEmpty
+        ? "$body • ${today.observances}"
+        : body;
 
     final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       ongoingChannelId,
@@ -106,11 +107,9 @@ class NotificationService {
       icon: dayIcon,
       largeIcon: DrawableResourceAndroidBitmap(dayIcon),
       number: dayNumber,
-      subText: today.tithiLabel.isNotEmpty ? today.tithiLabel : null,
       styleInformation: BigTextStyleInformation(
         expandedText.toString(),
         contentTitle: title,
-        summaryText: today.tithiLabel.isNotEmpty ? today.tithiLabel : null,
       ),
     );
 
@@ -128,7 +127,7 @@ class NotificationService {
     await _notificationsPlugin.show(
       id: ongoingNotificationId,
       title: title,
-      body: body,
+      body: contentText,
       notificationDetails: notificationDetails,
     );
   }

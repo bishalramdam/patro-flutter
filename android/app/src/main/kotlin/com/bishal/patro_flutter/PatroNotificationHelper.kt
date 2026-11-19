@@ -41,7 +41,6 @@ object PatroNotificationHelper {
                 iconResId = R.mipmap.ic_launcher
             }
 
-            val tithi = widgetData.getString("tithi_label", "") ?: ""
             val observance = widgetData.getString("observance", "") ?: ""
 
             val title = "${today.bsDay} ${today.bsMonth} ${today.bsYear}, ${today.weekday}"
@@ -49,15 +48,12 @@ object PatroNotificationHelper {
 
             val expandedText = StringBuilder().apply {
                 append(body)
-                if (tithi.isNotEmpty()) {
-                    append("\n• $tithi")
-                }
                 if (observance.isNotEmpty()) {
                     append("\n• $observance")
                 }
             }.toString()
 
-            val subText = if (tithi.isNotEmpty()) tithi else null
+            val contentText = if (observance.isNotEmpty()) "$body • $observance" else body
 
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
@@ -111,12 +107,10 @@ object PatroNotificationHelper {
                     }
                 }
                 .setContentTitle(title)
-                .setContentText(body)
-                .setSubText(subText)
+                .setContentText(contentText)
                 .setStyle(
                     NotificationCompat.BigTextStyle()
                         .setBigContentTitle(title)
-                        .setSummaryText(subText)
                         .bigText(expandedText)
                 )
                 .setOngoing(true)
