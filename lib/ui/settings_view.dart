@@ -105,7 +105,7 @@ class _SettingsViewState extends State<SettingsView> {
   Future<void> _checkGithubUpdate() async {
     setState(() {
       _isCheckingUpdate = true;
-      _syncStatusMessage = "GitHub बाट नयाँ पात्रो डेटा जाँचिँदैछ...";
+      _syncStatusMessage = "GitHub बाट नयाँ क्यालेन्डर डेटा जाँचिँदैछ...";
       _syncSuccess = false;
     });
 
@@ -323,7 +323,7 @@ class _SettingsViewState extends State<SettingsView> {
             const SizedBox(height: 24),
 
             // In-app GitHub Sync Section
-            _buildSectionHeader("पात्रो डेटा अद्यावधिक (Zero-Rebuild GitHub Sync)", isDark),
+            _buildSectionHeader("क्यालेन्डर डेटा अद्यावधिक (Zero-Rebuild GitHub Sync)", isDark),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(16),
@@ -357,7 +357,7 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "पञ्चाङ्ग समितिले २०८४ को नयाँ पात्रो निकाल्दा Play Store / App Store मा एप अपडेट नगरिकनै यो १-क्लिक सिङ्कमार्फत नयाँ वर्षको आधिकारिक दिनहरू स्वतः डाउनलोड हुन्छ।",
+                    "पञ्चाङ्ग समितिले २०८४ को नयाँ क्यालेन्डर निकाल्दा Play Store / App Store मा एप अपडेट नगरिकनै यो १-क्लिक सिङ्कमार्फत नयाँ वर्षको आधिकारिक दिनहरू स्वतः डाउनलोड हुन्छ।",
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.4,
@@ -444,7 +444,7 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "१. आफ्नो मोबाइलको होम स्क्रिनमा केही सेकेन्ड थिचिराख्नुहोस् (Long-press)।\n२. '+' वा 'Widgets' बटनमा थिच्नुहोस्।\n३. 'पात्रो' छान्नुहोस् र विजेट रोज्नुहोस्।\n४. मध्यरात १२:०० बजे विजेटले स्वतः नयाँ मिति देखाउँछ।",
+                    "१. आफ्नो मोबाइलको होम स्क्रिनमा केही सेकेन्ड थिचिराख्नुहोस् (Long-press)।\n२. '+' वा 'Widgets' बटनमा थिच्नुहोस्।\n३. 'Calendar' छान्नुहोस् र विजेट रोज्नुहोस्।\n४. मध्यरात १२:०० बजे विजेटले स्वतः नयाँ मिति देखाउँछ।",
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.5,

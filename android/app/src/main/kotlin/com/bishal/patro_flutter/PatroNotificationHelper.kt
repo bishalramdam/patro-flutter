@@ -55,7 +55,7 @@ object PatroNotificationHelper {
                 } catch (_: Exception) {
                 }
 
-                val channelName = "दैनिक पात्रो ब्यानर (Lock Screen Banner)"
+                val channelName = "दैनिक क्यालेन्डर ब्यानर (Lock Screen Banner)"
                 val channelDesc = "लक-स्क्रिन र नोटिफिकेसन बारमा आजको मिति देखाउँछ"
                 val channel = NotificationChannel(
                     CHANNEL_ID,

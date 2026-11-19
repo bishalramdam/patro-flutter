@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
     <application
-        android:label="पात्रो"
+        android:label="Calendar"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -32,9 +32,10 @@
             </intent-filter>
         </activity>
 
-        <!-- Patro Home Screen Widget -->
+        <!-- Calendar Home Screen Widget -->
         <receiver
             android:name=".PatroAppWidget"
+            android:label="Calendar"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

@@ -11,8 +11,8 @@ void main() {
     await tester.pumpWidget(PatroApp(engine: engine));
     await tester.pump();
 
-    // Verify app bar title "पात्रो" exists
-    expect(find.text('पात्रो'), findsWidgets);
+    // Verify app bar title exists
+    expect(find.text('क्यालेन्डर'), findsWidgets);
     expect(find.text('आज'), findsOneWidget);
   });
 }

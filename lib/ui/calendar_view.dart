@@ -357,7 +357,7 @@ class _CalendarViewState extends State<CalendarView> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
-          "पात्रो",
+          widget.engine.language == "English" ? "Calendar" : "क्यालेन्डर",
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 22,

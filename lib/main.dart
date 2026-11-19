@@ -59,7 +59,7 @@ class PatroApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'पात्रो',
+      title: 'Calendar',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       theme: ThemeData(
@@ -180,11 +180,11 @@ class _PatroHomeScreenState extends State<PatroHomeScreen> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               height: 64,
-              destinations: const [
+              destinations: [
                 NavigationDestination(
-                  icon: Icon(Icons.calendar_month_outlined),
-                  selectedIcon: Icon(Icons.calendar_month_rounded),
-                  label: 'पात्रो',
+                  icon: const Icon(Icons.calendar_month_outlined),
+                  selectedIcon: const Icon(Icons.calendar_month_rounded),
+                  label: widget.engine.language == 'English' ? 'Calendar' : 'क्यालेन्डर',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.swap_horiz_outlined),
