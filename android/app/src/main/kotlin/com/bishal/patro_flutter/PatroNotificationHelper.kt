@@ -1,5 +1,6 @@
 package com.bishal.patro_flutter
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -12,7 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import es.antonborri.home_widget.HomeWidgetPlugin
 
 object PatroNotificationHelper {
-    const val CHANNEL_ID = "patro_lockscreen_banner_channel_v3"
+    const val CHANNEL_ID = "patro_lockscreen_banner_channel_v4"
     const val NOTIFICATION_ID = 1001
 
     fun updateOngoingNotification(context: Context) {
@@ -63,6 +64,7 @@ object PatroNotificationHelper {
                 try {
                     notificationManager.deleteNotificationChannel("patro_lockscreen_banner_channel")
                     notificationManager.deleteNotificationChannel("patro_lockscreen_banner_channel_v2")
+                    notificationManager.deleteNotificationChannel("patro_lockscreen_banner_channel_v3")
                 } catch (_: Exception) {
                 }
 
@@ -76,7 +78,7 @@ object PatroNotificationHelper {
                     description = channelDesc
                     setSound(null, null)
                     enableVibration(false)
-                    lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
+                    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                     setShowBadge(false)
                 }
                 notificationManager.createNotificationChannel(channel)
@@ -99,6 +101,20 @@ object PatroNotificationHelper {
                 null
             }
 
+            val publicVersionNotification = NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(iconResId)
+                .apply {
+                    if (largeIconBitmap != null) {
+                        setLargeIcon(largeIconBitmap)
+                    }
+                }
+                .setContentTitle(title)
+                .setContentText(contentText)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentIntent(pendingIntent)
+                .setShowWhen(false)
+                .build()
+
             val builder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(iconResId)
                 .apply {
@@ -113,6 +129,7 @@ object PatroNotificationHelper {
                         .setBigContentTitle(title)
                         .bigText(expandedText)
                 )
+                .setPublicVersion(publicVersionNotification)
                 .setOngoing(true)
                 .setAutoCancel(false)
                 .setOnlyAlertOnce(true)

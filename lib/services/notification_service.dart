@@ -14,7 +14,7 @@ class NotificationService {
   static const int ongoingNotificationId = 1001;
   static const int alertNotificationId = 1002;
 
-  static const String ongoingChannelId = 'patro_lockscreen_banner_channel_v3';
+  static const String ongoingChannelId = 'patro_lockscreen_banner_channel_v4';
   static const String alertChannelId = 'patro_alert_channel';
 
   factory NotificationService() {
