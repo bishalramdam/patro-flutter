@@ -31,15 +31,28 @@ object PatroNotificationHelper {
                 "status_bar_numeral",
                 if (isLatinNumerals) "Latin" else "Devanagari"
             ) ?: "Latin"
+            val statusBarSize = widgetData.getString("status_bar_icon_size", "Large") ?: "Large"
+            val sizeSuffix = when (statusBarSize) {
+                "Medium" -> "_med"
+                "Small" -> "_sm"
+                else -> ""
+            }
 
             // Compute current date using native Kotlin Bikram engine
             val today = BikramCalendarHelper.getTodayData(isEnglish, isLatinNumerals)
             val bsDay = today.bsDayInt
 
-            val iconName = if (statusBarNumeral == "Devanagari") "day_dev_$bsDay" else "day_$bsDay"
+            val iconName = if (statusBarNumeral == "Devanagari") "day_dev${sizeSuffix}_$bsDay" else "day${sizeSuffix}_$bsDay"
             var iconResId = context.resources.getIdentifier(iconName, "drawable", context.packageName)
             if (iconResId == 0) {
-                iconResId = R.mipmap.ic_launcher
+                iconResId = context.resources.getIdentifier(
+                    if (statusBarNumeral == "Devanagari") "day_dev_$bsDay" else "day_$bsDay",
+                    "drawable",
+                    context.packageName
+                )
+                if (iconResId == 0) {
+                    iconResId = R.mipmap.ic_launcher
+                }
             }
 
             val observance = widgetData.getString("observance", "") ?: ""

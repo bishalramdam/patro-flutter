@@ -27,6 +27,7 @@ class _SettingsViewState extends State<SettingsView> {
   bool _syncSuccess = false;
   bool _showLockScreenBanner = true;
   String _statusBarNumeral = "Latin";
+  String _statusBarIconSize = "Large";
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _SettingsViewState extends State<SettingsView> {
     setState(() {
       _showLockScreenBanner = prefs.getBool('show_lockscreen_banner') ?? true;
       _statusBarNumeral = prefs.getString('status_bar_numeral') ?? 'Latin';
+      _statusBarIconSize = prefs.getString('status_bar_icon_size') ?? 'Large';
     });
   }
 
@@ -51,7 +53,29 @@ class _SettingsViewState extends State<SettingsView> {
 
     if (_showLockScreenBanner) {
       final today = widget.engine.getToday();
-      await NotificationService.instance.showOngoingDateBanner(today, statusIconNumeral: val);
+      await NotificationService.instance.showOngoingDateBanner(
+        today,
+        statusIconNumeral: val,
+        statusIconSize: _statusBarIconSize,
+      );
+    }
+    await HomeScreenWidgetHelper.updateWidgets(widget.engine);
+  }
+
+  Future<void> _updateStatusBarIconSize(String val) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('status_bar_icon_size', val);
+    setState(() {
+      _statusBarIconSize = val;
+    });
+
+    if (_showLockScreenBanner) {
+      final today = widget.engine.getToday();
+      await NotificationService.instance.showOngoingDateBanner(
+        today,
+        statusIconNumeral: _statusBarNumeral,
+        statusIconSize: val,
+      );
     }
     await HomeScreenWidgetHelper.updateWidgets(widget.engine);
   }
@@ -65,7 +89,11 @@ class _SettingsViewState extends State<SettingsView> {
 
     if (enabled) {
       final today = widget.engine.getToday();
-      await NotificationService.instance.showOngoingDateBanner(today, statusIconNumeral: _statusBarNumeral);
+      await NotificationService.instance.showOngoingDateBanner(
+        today,
+        statusIconNumeral: _statusBarNumeral,
+        statusIconSize: _statusBarIconSize,
+      );
       await HomeScreenWidgetHelper.updateWidgets(widget.engine);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -301,6 +329,31 @@ class _SettingsViewState extends State<SettingsView> {
                           onChanged: (val) {
                             if (val != null) {
                               _updateStatusBarNumeral(val);
+                            }
+                          },
+                        ),
+                      ),
+                      Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
+                      ListTile(
+                        leading: Icon(Icons.photo_size_select_large_rounded, color: isDark ? Colors.white : const Color(0xFF18181B)),
+                        title: const Text("आइकन साइज (Status Bar Icon Size)"),
+                        subtitle: Text(
+                          _statusBarIconSize == "Large"
+                              ? "ठूलो / घडी बराबर (Time Size)"
+                              : (_statusBarIconSize == "Medium" ? "मध्यम (Medium)" : "सानो (Compact)"),
+                        ),
+                        trailing: DropdownButton<String>(
+                          value: _statusBarIconSize,
+                          underline: const SizedBox(),
+                          dropdownColor: isDark ? const Color(0xFF181A1F) : Colors.white,
+                          items: const [
+                            DropdownMenuItem(value: "Large", child: Text("ठूलो (घडी जत्रै)")),
+                            DropdownMenuItem(value: "Medium", child: Text("मध्यम (Medium)")),
+                            DropdownMenuItem(value: "Small", child: Text("सानो (Compact)")),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              _updateStatusBarIconSize(val);
                             }
                           },
                         ),

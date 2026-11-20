@@ -72,11 +72,22 @@ class NotificationService {
   }
 
   /// 1. Persistent / Ongoing Notification Banner (Visible on Lock Screen & Status Bar)
-  Future<void> showOngoingDateBanner(TodayInfo today, {String statusIconNumeral = 'Latin'}) async {
+  Future<void> showOngoingDateBanner(
+    TodayInfo today, {
+    String statusIconNumeral = 'Latin',
+    String statusIconSize = 'Large',
+  }) async {
     await initialize();
 
     final int dayNumber = today.bs.day;
-    final String dayIcon = (statusIconNumeral == "Devanagari") ? "day_dev_$dayNumber" : "day_$dayNumber";
+    final String sizeSuffix = (statusIconSize == 'Medium')
+        ? '_med'
+        : (statusIconSize == 'Small')
+            ? '_sm'
+            : '';
+    final String dayIcon = (statusIconNumeral == "Devanagari")
+        ? "day_dev${sizeSuffix}_$dayNumber"
+        : "day${sizeSuffix}_$dayNumber";
 
     final String title = "${today.dayText} ${today.monthName} ${today.yearText}, ${today.weekdayName}";
     final String gMonth = Nepali.gregorianShortMonths[today.gregorian.month - 1];

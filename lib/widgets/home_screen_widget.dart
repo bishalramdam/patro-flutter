@@ -36,8 +36,10 @@ class HomeScreenWidgetHelper {
       final bool showBanner = prefs.getBool('show_lockscreen_banner') ?? true;
       final String statusBarNumeral = prefs.getString('status_bar_numeral') ??
           ((engine.language == 'English' || engine.numerals == 'Latin') ? 'Latin' : 'Devanagari');
+      final String statusBarIconSize = prefs.getString('status_bar_icon_size') ?? 'Large';
       await HomeWidget.saveWidgetData<bool>('show_lockscreen_banner', showBanner);
       await HomeWidget.saveWidgetData<String>('status_bar_numeral', statusBarNumeral);
+      await HomeWidget.saveWidgetData<String>('status_bar_icon_size', statusBarIconSize);
 
       // Trigger native widget update
       await HomeWidget.updateWidget(

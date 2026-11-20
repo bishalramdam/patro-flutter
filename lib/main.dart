@@ -37,12 +37,17 @@ void main() async {
       final prefs = await SharedPreferences.getInstance();
       final bool showBanner = prefs.getBool('show_lockscreen_banner') ?? true;
       final String statusIconNumeral = prefs.getString('status_bar_numeral') ?? 'Latin';
+      final String statusIconSize = prefs.getString('status_bar_icon_size') ?? 'Large';
       final notifService = NotificationService.instance;
       await notifService.initialize();
 
       if (showBanner) {
         final today = engine.getToday();
-        await notifService.showOngoingDateBanner(today, statusIconNumeral: statusIconNumeral);
+        await notifService.showOngoingDateBanner(
+          today,
+          statusIconNumeral: statusIconNumeral,
+          statusIconSize: statusIconSize,
+        );
       }
     } catch (e) {
       // Silently catch notification initialization exceptions
