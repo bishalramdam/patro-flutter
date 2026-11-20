@@ -13,7 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import es.antonborri.home_widget.HomeWidgetPlugin
 
 object PatroNotificationHelper {
-    const val CHANNEL_ID = "patro_lockscreen_banner_channel_v4"
+    const val CHANNEL_ID = "patro_lockscreen_banner_channel_v5"
     const val NOTIFICATION_ID = 1001
 
     fun updateOngoingNotification(context: Context) {
@@ -65,6 +65,7 @@ object PatroNotificationHelper {
                     notificationManager.deleteNotificationChannel("patro_lockscreen_banner_channel")
                     notificationManager.deleteNotificationChannel("patro_lockscreen_banner_channel_v2")
                     notificationManager.deleteNotificationChannel("patro_lockscreen_banner_channel_v3")
+                    notificationManager.deleteNotificationChannel("patro_lockscreen_banner_channel_v4")
                 } catch (_: Exception) {
                 }
 
@@ -73,7 +74,7 @@ object PatroNotificationHelper {
                 val channel = NotificationChannel(
                     CHANNEL_ID,
                     channelName,
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
                 ).apply {
                     description = channelDesc
                     setSound(null, null)
@@ -111,6 +112,10 @@ object PatroNotificationHelper {
                 .setContentTitle(title)
                 .setContentText(contentText)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setSilent(true)
+                .setSound(null)
+                .setVibrate(null)
                 .setContentIntent(pendingIntent)
                 .setShowWhen(false)
                 .build()
@@ -133,10 +138,11 @@ object PatroNotificationHelper {
                 .setOngoing(true)
                 .setAutoCancel(false)
                 .setOnlyAlertOnce(true)
+                .setSilent(true)
                 .setSound(null)
                 .setVibrate(null)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
                 .setShowWhen(false)
 
