@@ -38,6 +38,8 @@ void main() async {
       final bool showBanner = prefs.getBool('show_lockscreen_banner') ?? true;
       final String statusIconNumeral = prefs.getString('status_bar_numeral') ?? 'Latin';
       final String statusIconSize = prefs.getString('status_bar_icon_size') ?? 'Large';
+      final int statusIconScale = prefs.getInt('status_bar_icon_scale') ??
+          (statusIconSize == 'Small' ? 55 : (statusIconSize == 'Medium' ? 75 : 90));
       final notifService = NotificationService.instance;
       await notifService.initialize();
 
@@ -46,7 +48,7 @@ void main() async {
         await notifService.showOngoingDateBanner(
           today,
           statusIconNumeral: statusIconNumeral,
-          statusIconSize: statusIconSize,
+          statusIconScale: statusIconScale,
         );
       }
     } catch (e) {

@@ -2,13 +2,16 @@
 // Offline Local Notifications for Patro: Lock-screen Banner & Normal Alerts.
 
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:home_widget/home_widget.dart';
 import '../engine/nepali.dart';
 import '../engine/patro_engine.dart';
 
 class NotificationService {
   static final NotificationService instance = NotificationService._internal();
   final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
+  static const MethodChannel _nativeChannel = MethodChannel('com.bishal.patro_flutter/notifications');
   bool _isInitialized = false;
 
   static const int ongoingNotificationId = 1001;
@@ -75,15 +78,24 @@ class NotificationService {
   Future<void> showOngoingDateBanner(
     TodayInfo today, {
     String statusIconNumeral = 'Latin',
-    String statusIconSize = 'Large',
+    int statusIconScale = 90,
   }) async {
     await initialize();
 
+    if (Platform.isAndroid) {
+      await HomeWidget.saveWidgetData<bool>('show_lockscreen_banner', true);
+      await HomeWidget.saveWidgetData<String>('status_bar_numeral', statusIconNumeral);
+      await HomeWidget.saveWidgetData<int>('status_bar_icon_scale', statusIconScale);
+      await HomeWidget.saveWidgetData<String>('observance', today.observances);
+      await _nativeChannel.invokeMethod('updateOngoingNotification');
+      return;
+    }
+
     final int dayNumber = today.bs.day;
-    final String sizeSuffix = (statusIconSize == 'Medium')
-        ? '_med'
-        : (statusIconSize == 'Small')
-            ? '_sm'
+    final String sizeSuffix = (statusIconScale <= 62)
+        ? '_sm'
+        : (statusIconScale <= 82)
+            ? '_med'
             : '';
     final String dayIcon = (statusIconNumeral == "Devanagari")
         ? "day_dev${sizeSuffix}_$dayNumber"
@@ -144,8 +156,19 @@ class NotificationService {
   }
 
   /// 2. Normal Alert Notification (Popup / Heads-Up Banner with Sound)
-  Future<void> showNormalAlert(TodayInfo today, {String statusIconNumeral = 'Latin'}) async {
+  Future<void> showNormalAlert(
+    TodayInfo today, {
+    String statusIconNumeral = 'Latin',
+    int statusIconScale = 90,
+  }) async {
     await initialize();
+
+    if (Platform.isAndroid) {
+      await HomeWidget.saveWidgetData<String>('status_bar_numeral', statusIconNumeral);
+      await HomeWidget.saveWidgetData<int>('status_bar_icon_scale', statusIconScale);
+      await _nativeChannel.invokeMethod('showNormalAlert');
+      return;
+    }
 
     final int dayNumber = today.bs.day;
     final String dayIcon = (statusIconNumeral == "Devanagari") ? "day_dev_$dayNumber" : "day_$dayNumber";
@@ -194,6 +217,11 @@ class NotificationService {
 
   /// Cancel Ongoing Banner
   Future<void> cancelOngoingBanner() async {
+    if (Platform.isAndroid) {
+      await HomeWidget.saveWidgetData<bool>('show_lockscreen_banner', false);
+      await _nativeChannel.invokeMethod('cancelOngoingNotification');
+      return;
+    }
     await _notificationsPlugin.cancel(id: ongoingNotificationId);
   }
 }

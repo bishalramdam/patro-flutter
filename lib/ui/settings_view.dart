@@ -27,7 +27,7 @@ class _SettingsViewState extends State<SettingsView> {
   bool _syncSuccess = false;
   bool _showLockScreenBanner = true;
   String _statusBarNumeral = "Latin";
-  String _statusBarIconSize = "Large";
+  double _statusBarIconScale = 90.0;
 
   @override
   void initState() {
@@ -37,10 +37,13 @@ class _SettingsViewState extends State<SettingsView> {
 
   Future<void> _loadNotificationPreference() async {
     final prefs = await SharedPreferences.getInstance();
+    final legacySize = prefs.getString('status_bar_icon_size') ?? 'Large';
+    final int initialScale = prefs.getInt('status_bar_icon_scale') ??
+        (legacySize == 'Small' ? 55 : (legacySize == 'Medium' ? 75 : 90));
     setState(() {
       _showLockScreenBanner = prefs.getBool('show_lockscreen_banner') ?? true;
       _statusBarNumeral = prefs.getString('status_bar_numeral') ?? 'Latin';
-      _statusBarIconSize = prefs.getString('status_bar_icon_size') ?? 'Large';
+      _statusBarIconScale = initialScale.clamp(40, 100).toDouble();
     });
   }
 
@@ -56,17 +59,17 @@ class _SettingsViewState extends State<SettingsView> {
       await NotificationService.instance.showOngoingDateBanner(
         today,
         statusIconNumeral: val,
-        statusIconSize: _statusBarIconSize,
+        statusIconScale: _statusBarIconScale.round(),
       );
     }
     await HomeScreenWidgetHelper.updateWidgets(widget.engine);
   }
 
-  Future<void> _updateStatusBarIconSize(String val) async {
+  Future<void> _updateStatusBarIconScale(int scale) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('status_bar_icon_size', val);
+    await prefs.setInt('status_bar_icon_scale', scale);
     setState(() {
-      _statusBarIconSize = val;
+      _statusBarIconScale = scale.toDouble();
     });
 
     if (_showLockScreenBanner) {
@@ -74,7 +77,7 @@ class _SettingsViewState extends State<SettingsView> {
       await NotificationService.instance.showOngoingDateBanner(
         today,
         statusIconNumeral: _statusBarNumeral,
-        statusIconSize: val,
+        statusIconScale: scale,
       );
     }
     await HomeScreenWidgetHelper.updateWidgets(widget.engine);
@@ -87,18 +90,20 @@ class _SettingsViewState extends State<SettingsView> {
       _showLockScreenBanner = enabled;
     });
 
+    final isEnglish = widget.engine.language == "English";
+
     if (enabled) {
       final today = widget.engine.getToday();
       await NotificationService.instance.showOngoingDateBanner(
         today,
         statusIconNumeral: _statusBarNumeral,
-        statusIconSize: _statusBarIconSize,
+        statusIconScale: _statusBarIconScale.round(),
       );
       await HomeScreenWidgetHelper.updateWidgets(widget.engine);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("लक-स्क्रिन ब्यानर सक्रिय भयो!"),
+          SnackBar(
+            content: Text(isEnglish ? "Lock-screen banner enabled!" : "लक-स्क्रिन ब्यानर सक्रिय भयो!"),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -108,8 +113,8 @@ class _SettingsViewState extends State<SettingsView> {
       await HomeScreenWidgetHelper.updateWidgets(widget.engine);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("लक-स्क्रिन ब्यानर निष्क्रिय भयो।"),
+          SnackBar(
+            content: Text(isEnglish ? "Lock-screen banner disabled." : "लक-स्क्रिन ब्यानर निष्क्रिय भयो।"),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -119,11 +124,18 @@ class _SettingsViewState extends State<SettingsView> {
 
   Future<void> _sendTestAlert() async {
     final today = widget.engine.getToday();
-    await NotificationService.instance.showNormalAlert(today, statusIconNumeral: _statusBarNumeral);
+    final isEnglish = widget.engine.language == "English";
+    await NotificationService.instance.showNormalAlert(
+      today,
+      statusIconNumeral: _statusBarNumeral,
+      statusIconScale: _statusBarIconScale.round(),
+    );
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("नोटिफिकेसन ब्यानर पठाइयो! माथि स्क्रिनबाट स्वाइप गरी हेर्नुहोस्।"),
+        SnackBar(
+          content: Text(isEnglish
+              ? "Test notification sent! Swipe down from the top to view."
+              : "नोटिफिकेसन ब्यानर पठाइयो! माथि स्क्रिनबाट स्वाइप गरी हेर्नुहोस्।"),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -193,6 +205,7 @@ class _SettingsViewState extends State<SettingsView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final isEnglish = widget.engine.language == "English";
 
     return Scaffold(
       backgroundColor: isDark ? Colors.black : const Color(0xFFF4F5F7),
@@ -200,7 +213,7 @@ class _SettingsViewState extends State<SettingsView> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
-          "सेटिङ",
+          isEnglish ? "Settings" : "सेटिङ",
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 22,
@@ -214,7 +227,10 @@ class _SettingsViewState extends State<SettingsView> {
           padding: const EdgeInsets.all(16),
           children: [
             // Preference Section
-            _buildSectionHeader("अङ्क तथा भाषा (Appearance & Language)", isDark),
+            _buildSectionHeader(
+              isEnglish ? "Appearance & Language" : "अङ्क तथा भाषा (Appearance & Language)",
+              isDark,
+            ),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -232,9 +248,11 @@ class _SettingsViewState extends State<SettingsView> {
                   child: Column(
                     children: [
                       ListTile(
-                        title: const Text("अङ्क शैली (Numerals)"),
+                        title: Text(isEnglish ? "Numerals" : "अङ्क शैली (Numerals)"),
                         subtitle: Text(
-                          widget.engine.numerals == "Devanagari" ? "देवनागरी (०१२३४५६७८९)" : "ल्याटिन (0123456789)",
+                          widget.engine.numerals == "Devanagari"
+                              ? (isEnglish ? "Devanagari (०१२३४५६७८९)" : "देवनागरी (०१२३४५६७८९)")
+                              : (isEnglish ? "Latin (0123456789)" : "ल्याटिन (0123456789)"),
                         ),
                         trailing: DropdownButton<String>(
                           value: widget.engine.numerals,
@@ -256,7 +274,7 @@ class _SettingsViewState extends State<SettingsView> {
                       ),
                       Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
                       ListTile(
-                        title: const Text("भाषा (Language)"),
+                        title: Text(isEnglish ? "Language" : "भाषा (Language)"),
                         subtitle: Text(widget.engine.language == "Nepali" ? "नेपाली (Nepali)" : "English"),
                         trailing: DropdownButton<String>(
                           value: widget.engine.language,
@@ -284,7 +302,10 @@ class _SettingsViewState extends State<SettingsView> {
             const SizedBox(height: 24),
 
             // Notification Section
-            _buildSectionHeader("सूचना तथा ब्यानर (Notifications & Lock Screen)", isDark),
+            _buildSectionHeader(
+              isEnglish ? "Notifications & Lock Screen" : "सूचना तथा ब्यानर (Notifications & Lock Screen)",
+              isDark,
+            ),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -302,10 +323,12 @@ class _SettingsViewState extends State<SettingsView> {
                   child: Column(
                     children: [
                       SwitchListTile(
-                        title: const Text("लक-स्क्रिन र ब्यानर (Lock Screen Banner)"),
-                        subtitle: const Text(
-                          "फोन लक हुँदा पनि स्क्रिनमा आजको मिति र बार देखाइराख्ने",
-                          style: TextStyle(fontSize: 12),
+                        title: Text(isEnglish ? "Lock Screen Banner" : "लक-स्क्रिन र ब्यानर (Lock Screen Banner)"),
+                        subtitle: Text(
+                          isEnglish
+                              ? "Keep today's date visible in the status bar & lock screen"
+                              : "फोन लक हुँदा पनि स्क्रिनमा आजको मिति र बार देखाइराख्ने",
+                          style: const TextStyle(fontSize: 12),
                         ),
                         value: _showLockScreenBanner,
                         activeColor: isDark ? Colors.white : const Color(0xFF18181B),
@@ -314,9 +337,11 @@ class _SettingsViewState extends State<SettingsView> {
                       Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
                       ListTile(
                         leading: Icon(Icons.pin_rounded, color: isDark ? Colors.white : const Color(0xFF18181B)),
-                        title: const Text("स्ट्याटस बार आइकन (Status Bar Icon Day)"),
+                        title: Text(isEnglish ? "Status Bar Icon Numeral" : "स्ट्याटस बार आइकन (Status Bar Icon Day)"),
                         subtitle: Text(
-                          _statusBarNumeral == "Latin" ? "अंग्रेजी गते (17)" : "नेपाली गते (१७)",
+                          _statusBarNumeral == "Latin"
+                              ? (isEnglish ? "English digits (17)" : "अंग्रेजी गते (17)")
+                              : (isEnglish ? "Nepali digits (१७)" : "नेपाली गते (१७)"),
                         ),
                         trailing: DropdownButton<String>(
                           value: _statusBarNumeral,
@@ -334,35 +359,71 @@ class _SettingsViewState extends State<SettingsView> {
                         ),
                       ),
                       Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
-                      ListTile(
-                        leading: Icon(Icons.photo_size_select_large_rounded, color: isDark ? Colors.white : const Color(0xFF18181B)),
-                        title: const Text("आइकन साइज (Status Bar Icon Size)"),
-                        subtitle: Text(
-                          _statusBarIconSize == "Large"
-                              ? "ठूलो / घडी बराबर (Time Size)"
-                              : (_statusBarIconSize == "Medium" ? "मध्यम (Medium)" : "सानो (Compact)"),
-                        ),
-                        trailing: DropdownButton<String>(
-                          value: _statusBarIconSize,
-                          underline: const SizedBox(),
-                          dropdownColor: isDark ? const Color(0xFF181A1F) : Colors.white,
-                          items: const [
-                            DropdownMenuItem(value: "Large", child: Text("ठूलो (घडी जत्रै)")),
-                            DropdownMenuItem(value: "Medium", child: Text("मध्यम (Medium)")),
-                            DropdownMenuItem(value: "Small", child: Text("सानो (Compact)")),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.photo_size_select_large_rounded,
+                                  color: isDark ? Colors.white : const Color(0xFF18181B),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    isEnglish ? "Status Bar Icon Size" : "आइकन साइज (Status Bar Icon Size)",
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: (isDark ? Colors.white : const Color(0xFF18181B)).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    "${_statusBarIconScale.round()}%",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark ? Colors.white : const Color(0xFF18181B),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Slider(
+                              value: _statusBarIconScale,
+                              min: 40,
+                              max: 100,
+                              divisions: 60,
+                              label: "${_statusBarIconScale.round()}%",
+                              activeColor: isDark ? Colors.white : const Color(0xFF18181B),
+                              inactiveColor: isDark ? const Color(0xFF27272A) : const Color(0xFFE5E7EB),
+                              onChanged: (val) {
+                                setState(() {
+                                  _statusBarIconScale = val;
+                                });
+                              },
+                              onChangeEnd: (val) {
+                                _updateStatusBarIconScale(val.round());
+                              },
+                            ),
                           ],
-                          onChanged: (val) {
-                            if (val != null) {
-                              _updateStatusBarIconSize(val);
-                            }
-                          },
                         ),
                       ),
                       Divider(height: 1, color: isDark ? const Color(0xFF222428) : const Color(0xFFE5E7EB)),
                       ListTile(
                         leading: Icon(Icons.notifications_active_rounded, color: isDark ? Colors.white : const Color(0xFF18181B)),
-                        title: const Text("सामान्य सूचना परीक्षण (Test Alert Banner)"),
-                        subtitle: const Text("तत्काल पप-अप ब्यानर सूचना पठाएर हेर्नुहोस्", style: TextStyle(fontSize: 12)),
+                        title: Text(isEnglish ? "Test Alert Banner" : "सामान्य सूचना परीक्षण (Test Alert Banner)"),
+                        subtitle: Text(
+                          isEnglish
+                              ? "Send an immediate popup notification to preview"
+                              : "तत्काल पप-अप ब्यानर सूचना पठाएर हेर्नुहोस्",
+                          style: const TextStyle(fontSize: 12),
+                        ),
                         trailing: const Icon(Icons.chevron_right_rounded),
                         onTap: _sendTestAlert,
                       ),
@@ -374,7 +435,10 @@ class _SettingsViewState extends State<SettingsView> {
             const SizedBox(height: 24),
 
             // In-app GitHub Sync Section
-            _buildSectionHeader("क्यालेन्डर डेटा अद्यावधिक (Zero-Rebuild GitHub Sync)", isDark),
+            _buildSectionHeader(
+              isEnglish ? "Calendar Data Sync" : "क्यालेन्डर डेटा अद्यावधिक (Zero-Rebuild GitHub Sync)",
+              isDark,
+            ),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(16),
@@ -394,7 +458,7 @@ class _SettingsViewState extends State<SettingsView> {
                       Icon(Icons.sync_rounded, color: isDark ? Colors.white : const Color(0xFF18181B), size: 24),
                       const SizedBox(width: 8),
                       Text(
-                        "पञ्चाङ्ग समिति डेटा सिङ्क",
+                        isEnglish ? "Panchanga Samiti Data Sync" : "पञ्चाङ्ग समिति डेटा सिङ्क",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -405,7 +469,9 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "पञ्चाङ्ग समितिले २०८४ को नयाँ क्यालेन्डर निकाल्दा Play Store / App Store मा एप अपडेट नगरिकनै यो १-क्लिक सिङ्कमार्फत नयाँ वर्षको आधिकारिक दिनहरू स्वतः डाउनलोड हुन्छ।",
+                    isEnglish
+                        ? "Download official new year calendar tables directly with 1 click whenever Panchanga Samiti publishes updates—no app rebuild needed."
+                        : "पञ्चाङ्ग समितिले २०८४ को नयाँ क्यालेन्डर निकाल्दा Play Store / App Store मा एप अपडेट नगरिकनै यो १-क्लिक सिङ्कमार्फत नयाँ वर्षको आधिकारिक दिनहरू स्वतः डाउनलोड हुन्छ।",
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.4,
@@ -415,9 +481,19 @@ class _SettingsViewState extends State<SettingsView> {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      _buildBadge("प्रमाणित: ${CalendarData.attestedThrough} सम्म", const Color(0xFF10B981)),
+                      _buildBadge(
+                        isEnglish
+                            ? "Attested: ${CalendarData.attestedThrough}"
+                            : "प्रमाणित: ${CalendarData.attestedThrough} सम्म",
+                        const Color(0xFF10B981),
+                      ),
                       const SizedBox(width: 8),
-                      _buildBadge("स्वीकृत: ${CalendarData.publishedThrough} सम्म", isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B)),
+                      _buildBadge(
+                        isEnglish
+                            ? "Published: ${CalendarData.publishedThrough}"
+                            : "स्वीकृत: ${CalendarData.publishedThrough} सम्म",
+                        isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -438,7 +514,9 @@ class _SettingsViewState extends State<SettingsView> {
                           )
                         : const Icon(Icons.download_rounded, size: 20),
                     label: Text(
-                      _isCheckingUpdate ? "जाँचिँदैछ..." : "नयाँ डेटा जाँच्नुहोस् (Check GitHub)",
+                      _isCheckingUpdate
+                          ? (isEnglish ? "Checking..." : "जाँचिँदैछ...")
+                          : (isEnglish ? "Check for Updates (GitHub)" : "नयाँ डेटा जाँच्नुहोस् (Check GitHub)"),
                       style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                     ),
                   ),
@@ -459,7 +537,10 @@ class _SettingsViewState extends State<SettingsView> {
             const SizedBox(height: 24),
 
             // Home Screen Widget info
-            _buildSectionHeader("होम-स्क्रिन विजेट (Home Screen Widgets)", isDark),
+            _buildSectionHeader(
+              isEnglish ? "Home Screen Widgets" : "होम-स्क्रिन विजेट (Home Screen Widgets)",
+              isDark,
+            ),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(16),
@@ -479,7 +560,7 @@ class _SettingsViewState extends State<SettingsView> {
                       Icon(Icons.widgets_rounded, color: isDark ? Colors.white : const Color(0xFF18181B), size: 22),
                       const SizedBox(width: 8),
                       Text(
-                        "विजेट थप्ने तरिका",
+                        isEnglish ? "How to Add Widgets" : "विजेट थप्ने तरिका",
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
@@ -490,7 +571,9 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "१. आफ्नो मोबाइलको होम स्क्रिनमा केही सेकेन्ड थिचिराख्नुहोस् (Long-press)।\n२. '+' वा 'Widgets' बटनमा थिच्नुहोस्।\n३. 'Calendar' छान्नुहोस् र विजेट रोज्नुहोस्।\n४. मध्यरात १२:०० बजे विजेटले स्वतः नयाँ मिति देखाउँछ।",
+                    isEnglish
+                        ? "1. Long-press on your phone's home screen.\n2. Tap '+' or 'Widgets'.\n3. Select 'Calendar' and pick a widget.\n4. Widgets update automatically every midnight at 12:00 AM."
+                        : "१. आफ्नो मोबाइलको होम स्क्रिनमा केही सेकेन्ड थिचिराख्नुहोस् (Long-press)।\n२. '+' वा 'Widgets' बटनमा थिच्नुहोस्।\n३. 'Calendar' छान्नुहोस् र विजेट रोज्नुहोस्।\n४. मध्यरात १२:०० बजे विजेटले स्वतः नयाँ मिति देखाउँछ।",
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.5,
